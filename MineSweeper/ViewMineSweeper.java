@@ -12,21 +12,24 @@ public class ViewMineSweeper extends JFrame {
     private JMenuItem exitOption;
     private JMenuItem newGameOption;
 
+    JButton cells[][];
+
     public ViewMineSweeper() {
         createMenu();
         createWindow();
+        createCells();
     }
 
     private void createWindow() {
         panel = new JPanel();
-        panel.setLayout(new GridLayout());
+        panel.setLayout(new GridLayout(8,8));
         panel.setOpaque(true);
         panel.setBackground(Color.DARK_GRAY);
 
         //window settings
         JFrame frame = new JFrame("Minesweeper");
         frame.add(panel);
-        frame.setPreferredSize(new Dimension(1280, 720));
+        frame.setPreferredSize(new Dimension(500, 500));
         frame.setLocationRelativeTo(null); //center window
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
@@ -50,8 +53,26 @@ public class ViewMineSweeper extends JFrame {
         systemMenu.add(exitOption);
     }
 
-    private void createButtons() {
+    private void createCells() {
 
+        cells = new JButton[8][8];
+        for (int i = 0; i < cells.length; i++) {
+            for (int j = 0; j < cells[i].length; j++) {
+                cells[i][j] = new JButton();
+                cells[i][j].setContentAreaFilled(false);
+                cells[i][j].setBorderPainted(true);
+                cells[i][j].setPreferredSize(new Dimension(40, 40));
+                cells[i][j].setFont(new Font("Tahoma", Font.PLAIN, 20));
+                cells[i][j].setBackground(new Color(0, 204, 0));
+                cells[i][j].getModel().setEnabled(true);
+                panel.add(cells[i][j]);
+            }
+        }
+
+    }
+
+    public JButton[][] getCells() {
+        return cells;
     }
 
     public JMenuItem getExitOption() {
