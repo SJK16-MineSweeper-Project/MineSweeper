@@ -1,43 +1,86 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 /**
  * Created by Maxie on 2017-01-17.
  */
 public class ControllerMineSweeper {
 
-    private ExitListener exit = new ExitListener();
+    private ModelGameBoard modelBoard;
+    private ModelMineSweeper modelSweeper;
+    private ViewMineSweeper viewSweeper;
+
+    private CellListener cellListener;
+    private ExitListener exitListener;
+
+    private GameDifficulty gameDifficulty;
 
     public ControllerMineSweeper() {
-        ViewMineSweeper viewSweeper = new ViewMineSweeper();
-        ModelGameBoard modelBoard = new ModelGameBoard(viewSweeper, 2);
-        ModelMineSweeper modelSweeper = new ModelMineSweeper();
+        this.viewSweeper = new ViewMineSweeper();
+        this.modelBoard = new ModelGameBoard(viewSweeper, 2);
+        this.modelSweeper = new ModelMineSweeper();
 
-        CellListener cellListener = new CellListener(viewSweeper, modelBoard);
-        RightClickListener mouseListener = new RightClickListener(viewSweeper, modelBoard);
+        this.cellListener = new CellListener(viewSweeper, modelBoard);
+        this.exitListener = new ExitListener();
 
-        viewSweeper.getExitOption().addActionListener(exit);
+        viewSweeper.getExitOption().addActionListener(exitListener);
 
-        // Add clicked-listener to all cells
-        for (int i = 0; i < viewSweeper.cells.length; i++) {
-            for (int j = 0; j < viewSweeper.cells[i].length; j++) {
-                viewSweeper.cells[i][j].addActionListener(cellListener);
+        // Add listener to all cells
+        for (int i = 0; i < viewSweeper.getCells().length; i++) {
+            for (int j = 0; j < viewSweeper.getCells()[i].length; j++) {
+                viewSweeper.getCells()[i][j].addActionListener(cellListener);
             }
         }
 
-        // Add right-clicked-listener to all cells
-        for (int i = 0; i < viewSweeper.cells.length; i++) {
-            for (int j = 0; j < viewSweeper.cells[i].length; j++) {
-                viewSweeper.cells[i][j].addMouseListener(mouseListener);
-            }
-        }
-
+        gameDifficulty = GameDifficulty.EASY; //placeholder
+        setGameDifficulty(gameDifficulty);
+        modelBoard.placeMines(modelBoard.getNrOfMines());
         modelBoard.setCellValues();
+
+
     }
 
+    /**
+     * Method used to set the number of mines to be placed.
+     * Harder difficulty adds more mines to the field.
+     *
+     * @param gameDifficulty
+     */
+    public void setGameDifficulty(GameDifficulty gameDifficulty) {
+        GameDifficulty difficulty = gameDifficulty;
+        switch (difficulty) {
+            case VERY_EASY:
+                modelBoard.setNrOfMines(5);
+                System.out.println("set game to very easy");
+                break;
+            case EASY:
+                modelBoard.setNrOfMines(10);
+                System.out.println("set game to easy");
+                break;
+            case NORMAL:
+                modelBoard.setNrOfMines(15);
+                System.out.println("set game to normal");
+                break;
+            case HARD:
+                modelBoard.setNrOfMines(20);
+                System.out.println("set game to hard");
+                break;
+            case VERY_HARD:
+                modelBoard.setNrOfMines(25);
+                System.out.println("set game to very hard");
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    /**
+     * Class that adds an actionListener used to exit the application
+     *
+     * @author Maxie
+     */
     private static class ExitListener implements ActionListener {
 
         @Override
@@ -56,73 +99,27 @@ public class ControllerMineSweeper {
      *
      * @author Bartek
      */
-    public static class CellListener implements ActionListener {
+    private static class CellListener implements ActionListener {
 
-        ViewMineSweeper viewSweeper;
-        ModelGameBoard modelBoard;
+        private ViewMineSweeper viewSweeper;
+        private ModelGameBoard modelBoard;
 
         public CellListener(ViewMineSweeper viewSweeper, ModelGameBoard modelBoard) {
             this.viewSweeper = viewSweeper;
             this.modelBoard = modelBoard;
         }
-        @Override
+
         public void actionPerformed(ActionEvent e) {
-            for (int i = 0; i < viewSweeper.cells.length; i++) {
-                for (int j = 0; j < viewSweeper.cells[i].length; j++) {
-                    if (viewSweeper.cells[i][j].getModel().isEnabled()) {
-                        if (e.getSource() == viewSweeper.cells[i][j]) {
+            for (int i = 0; i < viewSweeper.getCells().length; i++) {
+                for (int j = 0; j < viewSweeper.getCells()[i].length; j++) {
+                    if (viewSweeper.getCells()[i][j].getModel().isEnabled()) {
+                        if (e.getSource() == viewSweeper.getCells()[i][j]) {
                             modelBoard.cellClicked(i, j);
                             modelBoard.openCell(i, j);
                         }
                     }
                 }
             }
-        }
-    }
-
-    public class RightClickListener implements MouseListener {
-
-        /**
-         * Action performed after button is right-clicked
-         */
-
-        ViewMineSweeper viewSweeper;
-        ModelGameBoard modelBoard;
-
-        public RightClickListener(ViewMineSweeper viewSweeper, ModelGameBoard modelBoard) {
-            this.viewSweeper = viewSweeper;
-            this.modelBoard = modelBoard;
-        }
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (SwingUtilities.isRightMouseButton(e) || e.isControlDown()) {
-                System.out.println("Right Worked");
-                for (int i = 0; i < viewSweeper.cells.length; i++) {
-                    for (int j = 0; j < viewSweeper.cells[i].length; j++) {
-                        if (e.getSource() == viewSweeper.cells[i][j]) {
-                            modelBoard.cells[i][j] = 10000;
-                            viewSweeper.cells[i][j].setText("Might be bomb");
-                        }
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-
-        }
-        @Override
-        public void mouseExited(MouseEvent e) {
-
-        }
-        @Override
-        public void mousePressed(MouseEvent e) {
-
-        }
-        @Override
-        public void mouseReleased(MouseEvent e) {
-
         }
     }
 
