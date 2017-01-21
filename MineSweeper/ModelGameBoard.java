@@ -119,14 +119,11 @@ public class ModelGameBoard {
     public void setCellValues() {
         for(int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
-                if (cells[i][j] == 100) {
-                    // Remain value 100 for boms
-                } else {
+                if (cells[i][j] != 100) {
                     // calculate value, 0 for non-adjacent cells and >0 for mine-adjacent
                     int cellValue = 0;
                     cellValue = cellValue(i, j);
-                    int setCellValue = 0;
-                    setCellValue = setCellValue(cellValue, i, j);
+                    setCellValue(cellValue, i, j);
                 }
             }
         }
@@ -189,7 +186,12 @@ public class ModelGameBoard {
     }
 
     public void openCell(int i, int j) {
-        if(cells[i][j] == 0) {
+        if(cells[i][j] == 100) {
+            viewSweeper.cells[i][j].setText("Bomb");
+            viewSweeper.cells[i][j].setEnabled(false);
+            System.out.println("Bomb. Game over!");
+        }
+        else if(cells[i][j] == 0) {
             viewSweeper.cells[i][j].setEnabled(false);
             openNeigbours(i, j);
         }
