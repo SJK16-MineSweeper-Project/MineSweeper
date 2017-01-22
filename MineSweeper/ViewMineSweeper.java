@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Created by Maxie on 2017-01-17.
@@ -35,6 +37,12 @@ public class ViewMineSweeper extends JFrame {
         frame.setVisible(true);
         frame.pack();
         frame.setJMenuBar(menuBar);
+
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent windowEvent) {
+                System.exit(0);
+            }
+        });
     }
 
     private void createMenu() {
