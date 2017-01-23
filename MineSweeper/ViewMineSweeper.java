@@ -13,6 +13,8 @@ public class ViewMineSweeper extends JFrame {
     private JPanel topPanel;
 
     private JLabel timerLabel; //placeholder, currently shows difficulty
+    private JLabel difficultyLabel;
+    private JLabel flagsLabel;
     private JLabel gameStatus;
     private JLabel bombsOnBoard;
 
@@ -71,14 +73,24 @@ public class ViewMineSweeper extends JFrame {
         topPanel.add(bombsOnBoard, FlowLayout.LEFT);
 
         //create timer
-        timerLabel = new JLabel();
-        timerLabel.setForeground(Color.WHITE);
-        topPanel.add(timerLabel, FlowLayout.CENTER);
+        difficultyLabel = new JLabel();
+        difficultyLabel.setForeground(Color.WHITE);
+        topPanel.add(difficultyLabel, FlowLayout.CENTER);
 
         //create gameStatus
         gameStatus = new JLabel();
         gameStatus.setForeground(Color.WHITE);
         topPanel.add(gameStatus, FlowLayout.RIGHT);
+
+        //create flags
+        flagsLabel = new JLabel();
+        flagsLabel.setForeground(Color.WHITE);
+        topPanel.add(flagsLabel, FlowLayout.RIGHT);
+
+        //create flags
+        timerLabel = new JLabel();
+        timerLabel.setForeground(Color.WHITE);
+        topPanel.add(timerLabel, FlowLayout.RIGHT);
 
 
 
@@ -118,17 +130,26 @@ public class ViewMineSweeper extends JFrame {
 
     }
 
-    public void setGameStatus (String message) {
+    public void setGameStatus(String message) {
         gameStatus.setText(message);
     }
 
-    public void setBombs (int bombs) {
+    public void setBombs(int bombs) {
         String message = Integer.toString(bombs);
         bombsOnBoard.setText("Bombs on field: " + message);
     }
 
-    public void setTimerLabel (String message) {
-        timerLabel.setText(message);
+    public void setDifficultyLabel(String message) {
+        difficultyLabel.setText(message);
+    }
+
+
+    public void setTimerLabel(long timePlayed) {
+        timerLabel.setText("Time: " + timePlayed);
+    }
+
+    public void setFlagsLabel(int flags) {
+        flagsLabel.setText("Flags remaining: " + flags);
     }
 
     public JButton[][] getCells() {

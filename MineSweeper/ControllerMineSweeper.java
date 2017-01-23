@@ -3,7 +3,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
 
 /**
  * Created by Maxie on 2017-01-17.
@@ -49,6 +48,7 @@ public class ControllerMineSweeper {
         gameDifficulty = GameDifficulty.EASY; //placeholder
         setGameDifficulty();
         modelBoard.placeMines(modelBoard.getNrOfMines());
+        modelBoard.setFlags(modelBoard.getNrOfMines());
         modelBoard.setCellValues();
     }
 
@@ -92,7 +92,7 @@ public class ControllerMineSweeper {
             default:
                 break;
         }
-        viewSweeper.setTimerLabel(" | Current difficulty " + difficulty + " | ");
+        viewSweeper.setDifficultyLabel(" | Current difficulty " + difficulty + " | ");
     }
 
 
@@ -136,7 +136,7 @@ public class ControllerMineSweeper {
                     if (viewSweeper.getCells()[i][j].getModel().isEnabled()) {
                         if (e.getSource() == viewSweeper.getCells()[i][j]) {
                             modelBoard.cellClicked(i, j);
-                            modelBoard.openCell(i, j);
+                            modelBoard.move(i, j);
                         }
                     }
                 }
@@ -165,8 +165,7 @@ public class ControllerMineSweeper {
                 for (int i = 0; i < viewSweeper.cells.length; i++) {
                     for (int j = 0; j < viewSweeper.cells[i].length; j++) {
                         if (e.getSource() == viewSweeper.cells[i][j]) {
-                            modelBoard.getCells()[i][j] = CellValue.MAYBEMINE.getValue();
-                            viewSweeper.getCells()[i][j].setText("Might be bomb");
+                            modelBoard.toggleMarkMine(i, j);
                         }
                     }
                 }
