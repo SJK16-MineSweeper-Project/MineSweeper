@@ -17,11 +17,9 @@ public class ControllerMineSweeper {
     private ExitListener exitListener;
     private RightClickListener mouseListener;
 
-    private GameDifficulty gameDifficulty;
-
     public ControllerMineSweeper() {
         this.viewSweeper = new ViewMineSweeper();
-        this.modelBoard = new ModelGameBoard(viewSweeper, 2);
+        this.modelBoard = new ModelGameBoard(viewSweeper, 8, 8); //i for rows, j for columns
         this.modelSweeper = new ModelMineSweeper();
 
         this.cellListener = new CellListener(viewSweeper, modelBoard);
@@ -55,7 +53,7 @@ public class ControllerMineSweeper {
      * Method used to set the number of mines to be placed.
      * Harder difficulty adds more mines to the field.
      */
-    public void setGameDifficulty() {//GameDifficulty gameDifficulty) {
+    public void setGameDifficulty() {
         Object[] possibilities = {
                 GameDifficulty.VERY_EASY.getMessage(),
                 GameDifficulty.EASY.getMessage(),
@@ -65,7 +63,6 @@ public class ControllerMineSweeper {
         String difficulty = (String) JOptionPane.showInputDialog(null, "Choose difficulty", null,
                 JOptionPane.PLAIN_MESSAGE, null, possibilities, GameDifficulty.EASY.getMessage());
 
-        //GameDifficulty difficulty = gameDifficulty;
         switch (difficulty) {
             case "Very Easy":
                 modelBoard.setNrOfMines(GameDifficulty.VERY_EASY.getMines());
@@ -90,7 +87,7 @@ public class ControllerMineSweeper {
             default:
                 break;
         }
-        viewSweeper.setDifficultyLabel(" | Current difficulty " + difficulty + " | ");
+        viewSweeper.setDifficultyLabel("Current difficulty: " + difficulty);
     }
 
 

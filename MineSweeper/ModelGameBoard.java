@@ -17,8 +17,6 @@ public class ModelGameBoard implements Game {
     private Timer timer;
     private Random random = new Random();
 
-    private Array[][] gameBoard;
-
     private int[][] cells;
     private int[][] mines;
     private int rows;
@@ -31,12 +29,12 @@ public class ModelGameBoard implements Game {
     private int flags;
     private String message;
 
-    public ModelGameBoard(ViewMineSweeper viewSweeper, int value) {
+    public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j) {
         this.viewSweeper = viewSweeper;
-        rows = 8; //placeholder
-        columns = 8; //placeholder
-        cells = new int[rows][columns];
-        mines = new int[rows][columns];
+        this.rows = i; //placeholder
+        this.columns = j; //placeholder
+        this.cells = new int[rows][columns];
+        this.mines = new int[rows][columns];
         addTimer();
     }
 
@@ -64,7 +62,7 @@ public class ModelGameBoard implements Game {
 
     public void cellClicked(int i, int j) {
         System.out.println(cells[i][j]);
-        if(cells[i][j] != 0)
+        if (cells[i][j] != 0)
             message = "Clicked cell, it was a " + cells[i][j];
         else
             message = "Clicked cell, it was empty";
@@ -220,7 +218,7 @@ public class ModelGameBoard implements Game {
     @Override
     public boolean move(int i, int j) {
         boolean move = false;
-        if(cells[i][j] != CellValue.MAYBEMINE.getValue()) {
+        if (cells[i][j] != CellValue.MAYBEMINE.getValue()) {
             if (openedCells == 0) {
                 startTimer();
                 tStart = System.nanoTime();
@@ -259,24 +257,11 @@ public class ModelGameBoard implements Game {
     }
 
     public void convertCellValuesToString(int i, int j) {
-        if(cells[i][j] == CellValue.MINE.getValue()) {
+        if (cells[i][j] == CellValue.MINE.getValue()) {
             viewSweeper.getCells()[i][j].setText(String.valueOf("Mine"));
-        }
-        else {
+        } else {
             viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
         }
-
-        return move;
-    }
-
-    public void addFlag() {
-        --flags;
-        viewSweeper.setFlagsLabel(flags);
-    }
-
-    public void removeFlag() {
-        ++flags;
-        viewSweeper.setFlagsLabel(flags);;
     }
 
     public void toggleCellVisibility(int i, int j, boolean value) {
@@ -290,34 +275,33 @@ public class ModelGameBoard implements Game {
 
     public void removeFlag() {
         ++flags;
-        viewSweeper.setFlagsLabel(flags);;
+        viewSweeper.setFlagsLabel(flags);
+        ;
     }
 
     public boolean gameStatus() {
         System.out.println("Cells opened" + openedCells);
-        if(openedCells == rows*columns - nrOfMines || isGoing == false) {
+        if (openedCells == rows * columns - nrOfMines || isGoing == false) {
             System.out.println("All cells opened. Game end.");
             viewSweeper.setGameStatus("Game over");
             message = "Game Over!";
             stopTimer();
             return false;
-        }
-        else {
+        } else {
             System.out.println("Still cells to open.");
             return true;
         }
     }
 
     public void toggleMarkMine(int i, int j) {
-        if(cells[i][j] == CellValue.MAYBEMINE.getValue()) {
+        if (cells[i][j] == CellValue.MAYBEMINE.getValue()) {
             cells[i][j] = mines[i][j];
             mines[i][j] = 0;
             viewSweeper.getCells()[i][j].setText("");
             message = "removed flag from";
             removeFlag();
-        }
-        else {
-            if(flags > 0) {
+        } else {
+            if (flags > 0) {
                 mines[i][j] = cells[i][j];
                 cells[i][j] = CellValue.MAYBEMINE.getValue();
                 viewSweeper.getCells()[i][j].setText("Mine");
@@ -375,15 +359,11 @@ public class ModelGameBoard implements Game {
         this.nrOfMines = nrOfMines;
     }
 
-    public int[][] getCells() {
-        return cells;
-    }
-
     @Override
     public String getStatus(int i, int j) {
         boolean isGoing = gameStatus();
         String gameStatus;
-        if(isGoing == true)
+        if (isGoing == true)
             gameStatus = "Game active";
         else
             gameStatus = "Game over";
@@ -403,7 +383,4 @@ public class ModelGameBoard implements Game {
         this.flags = flags;
     }
 
-    public int getFlags() {
-        return flags;
-    }
 }
