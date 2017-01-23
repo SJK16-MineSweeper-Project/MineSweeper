@@ -7,14 +7,18 @@
  * Used to determine size of board.
  */
 public enum GameDifficulty {
-    VERY_EASY(1, "Very Easy"), EASY(2, "Easy"), NORMAL(3, "Normal"), HARD(4, "Hard"), VERY_HARD(5, "Very Hard");
+    VERY_EASY(5, "Very Easy"), EASY(10, "Easy"), NORMAL(15, "Normal"), HARD(20, "Hard"), VERY_HARD(25, "Very Hard");
 
-    private final int value;
+    private final int mines;
     private final String message;
 
-    GameDifficulty(int value, String message) {
-        this.value = value;
+    GameDifficulty(int mines, String message) {
+        this.mines = mines;
         this.message = message;
+    }
+
+    public int getMines() {
+        return mines;
     }
 
     public String getMessage() {

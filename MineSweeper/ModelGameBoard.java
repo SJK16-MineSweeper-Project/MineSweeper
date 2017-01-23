@@ -16,19 +16,23 @@ public class ModelGameBoard implements Game {
     private Array[][] gameBoard;
 
     private int[][] cells;
+    private int[][] mines;
     private int rows;
     private int columns;
-    private static int nrOfMines;
+    private int nrOfMines;
     private boolean isGoing = true;
     private int openedCells;
     private long tStart;
     private long tRes;
+    private int flags;
+    private String message;
 
     public ModelGameBoard(ViewMineSweeper viewSweeper, int value) {
         this.viewSweeper = viewSweeper;
         rows = 8; //placeholder
         columns = 8; //placeholder
         cells = new int[rows][columns];
+        mines = new int[rows][columns];
         addTimer();
     }
 
@@ -56,6 +60,11 @@ public class ModelGameBoard implements Game {
 
     public void cellClicked(int i, int j) {
         System.out.println(cells[i][j]);
+        if(cells[i][j] != 0)
+            message = "Clicked cell, it was a " + cells[i][j];
+        else
+            message = "Clicked cell, it was empty";
+
     }
 
     public int cellValue(int i, int j) {
@@ -204,34 +213,49 @@ public class ModelGameBoard implements Game {
         }
     }
 
-    public void openCell(int i, int j) {
-        startTimer();
-        if(openedCells == 0) {
-            tStart = System.nanoTime();
-            System.out.println("Starting elapsed time: " + tStart);
+    @Override
+    public boolean move(int i, int j) {
+        boolean move = false;
+        if(cells[i][j] != CellValue.MAYBEMINE.getValue()) {
+            if (openedCells == 0) {
+                startTimer();
+                tStart = System.nanoTime();
+                System.out.println("Starting elapsed time: " + tStart);
+            }
+            if (cells[i][j] == CellValue.MINE.getValue()) {
+                viewSweeper.getCells()[i][j].setText("Bomb");
+                for (int e = 0; e < viewSweeper.getCells().length; ++e)
+                    for (int c = 0; c < viewSweeper.getCells()[e].length; ++c)
+                        viewSweeper.getCells()[e][c].setEnabled(false);
+                System.out.println("Bomb. Game over!");
+                isGoing = false;
+                gameStatus();
+            } else if (cells[i][j] == CellValue.EMPTY.getValue()) {
+                cells[i][j] = CellValue.OPEN.getValue();
+                viewSweeper.getCells()[i][j].setEnabled(false);
+                ++openedCells;
+                openNeighbours(i, j);
+                gameStatus();
+            } else {
+                viewSweeper.getCells()[i][j].setEnabled(false);
+                viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
+                ++openedCells;
+                gameStatus();
+            }
+            move = true;
         }
-        if(cells[i][j] == CellValue.MINE.getValue()) {
-            viewSweeper.cells[i][j].setText("Bomb");
-            for(int e = 0; e < viewSweeper.cells.length; ++e)
-                for(int c = 0; c < viewSweeper.cells[e].length; ++c)
-                    viewSweeper.cells[e][c].setEnabled(false);
-            System.out.println("Bomb. Game over!");
-            isGoing = false;
-            gameStatus();
-        }
-        else if(cells[i][j] == CellValue.EMPTY.getValue()) {
-            cells[i][j] = CellValue.OPEN.getValue();
-            viewSweeper.cells[i][j].setEnabled(false);
-            ++openedCells;
-            openNeighbours(i, j);
-            gameStatus();
-        }
-        else {
-            viewSweeper.cells[i][j].setEnabled(false);
-            viewSweeper.cells[i][j].setText(String.valueOf(cells[i][j]));
-            ++openedCells;
-            gameStatus();
-        }
+
+        return move;
+    }
+
+    public void addFlag() {
+        --flags;
+        viewSweeper.setFlagsLabel(flags);
+    }
+
+    public void removeFlag() {
+        ++flags;
+        viewSweeper.setFlagsLabel(flags);;
     }
 
     public boolean gameStatus() {
@@ -239,6 +263,7 @@ public class ModelGameBoard implements Game {
         if(openedCells == rows*columns - nrOfMines || isGoing == false) {
             System.out.println("All cells opened. Game end.");
             viewSweeper.setGameStatus("Game over");
+            message = "Game Over!";
             stopTimer();
             return false;
         }
@@ -248,10 +273,31 @@ public class ModelGameBoard implements Game {
         }
     }
 
+    public void toggleMarkMine(int i, int j) {
+        if(cells[i][j] == CellValue.MAYBEMINE.getValue()) {
+            cells[i][j] = mines[i][j];
+            mines[i][j] = 0;
+            viewSweeper.getCells()[i][j].setText("");
+            message = "removed flag from " + getCells()[i][j];
+            removeFlag();
+        }
+        else {
+            if(flags > 0) {
+                mines[i][j] = cells[i][j];
+                cells[i][j] = CellValue.MAYBEMINE.getValue();
+                viewSweeper.getCells()[i][j].setText("Mine");
+                message = "Set flag on " + getCells()[i][j];
+                addFlag();
+            }
+        }
+        System.out.println("Flags: " + flags);
+    }
+
     public void addTimer() {
         ActionListener timerPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                System.out.println(timePlayed());
+                //System.out.println(timePlayed());
+                viewSweeper.setTimerLabel(timePlayed());
             }
         };
 
@@ -300,11 +346,6 @@ public class ModelGameBoard implements Game {
     }
 
     @Override
-    public boolean move(int i, int j) {
-        return false;
-    }
-
-    @Override
     public String getStatus(int i, int j) {
         boolean isGoing = gameStatus();
         String gameStatus;
@@ -317,10 +358,18 @@ public class ModelGameBoard implements Game {
 
     @Override
     public String getMessage() {
-        return null;
+        return message;
     }
 
     public Timer getTimer() {
         return timer;
+    }
+
+    public void setFlags(int flags) {
+        this.flags = flags;
+    }
+
+    public int getFlags() {
+        return flags;
     }
 }
