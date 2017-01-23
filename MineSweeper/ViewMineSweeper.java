@@ -33,25 +33,26 @@ public class ViewMineSweeper extends JFrame {
     }
 
     private void createWindow() {
+
         //create main panel
         mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
 
         //create top panel
         topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout());
+        topPanel.setLayout(new BorderLayout());
         topPanel.setOpaque(true);
         topPanel.setBackground(Color.DARK_GRAY);
 
         //create game board
         panel = new JPanel();
-        panel.setLayout(new GridLayout(8,8));
+        panel.setLayout(new GridLayout(8, 8));
         panel.setOpaque(true);
         panel.setBackground(Color.DARK_GRAY);
 
         //create message board
         messageBoard = new JPanel();
-        messageBoard.setLayout(new FlowLayout());
+        messageBoard.setLayout(new BorderLayout());
         messageBoard.setOpaque(true);
         messageBoard.setBackground(Color.DARK_GRAY);
 
@@ -79,32 +80,41 @@ public class ViewMineSweeper extends JFrame {
         //create bomb label
         bombsOnBoard = new JLabel();
         bombsOnBoard.setForeground(Color.WHITE);
-        topPanel.add(bombsOnBoard, FlowLayout.LEFT);
-
-        //create timer
-        difficultyLabel = new JLabel();
-        difficultyLabel.setForeground(Color.WHITE);
-        topPanel.add(difficultyLabel, FlowLayout.CENTER);
-
-        //create gameStatus
-        gameStatus = new JLabel();
-        gameStatus.setForeground(Color.WHITE);
-        topPanel.add(gameStatus, FlowLayout.RIGHT);
-
-        //create flags
-        flagsLabel = new JLabel();
-        flagsLabel.setForeground(Color.WHITE);
-        topPanel.add(flagsLabel, FlowLayout.RIGHT);
-
-        //create flags
-        timerLabel = new JLabel();
-        timerLabel.setForeground(Color.WHITE);
-        topPanel.add(timerLabel, FlowLayout.RIGHT);
+        bombsOnBoard.setHorizontalAlignment(JLabel.LEFT);
+        messageBoard.add(bombsOnBoard, BorderLayout.WEST);
 
         //create messages
         messages = new JLabel();
         messages.setForeground(Color.WHITE);
-        messageBoard.add(messages);
+        messages.setHorizontalAlignment(JLabel.CENTER);
+        messageBoard.add(messages, BorderLayout.CENTER);
+
+        //create gameStatus
+        gameStatus = new JLabel();
+        gameStatus.setForeground(Color.WHITE);
+        gameStatus.setHorizontalAlignment(JLabel.RIGHT);
+        messageBoard.add(gameStatus, BorderLayout.EAST);
+
+        //create flags
+        flagsLabel = new JLabel();
+        flagsLabel.setText("Flags remaining : 10"); //default
+        flagsLabel.setForeground(Color.WHITE);
+        flagsLabel.setHorizontalAlignment(JLabel.LEFT);
+        topPanel.add(flagsLabel, BorderLayout.WEST);
+
+        //create timer
+        timerLabel = new JLabel();
+        timerLabel.setText("Time: 0"); //default-value
+        timerLabel.setForeground(Color.WHITE);
+        timerLabel.setHorizontalAlignment(JLabel.CENTER);
+        topPanel.add(timerLabel, BorderLayout.CENTER);
+
+        //create difficulty label
+        difficultyLabel = new JLabel();
+        difficultyLabel.setForeground(Color.WHITE);
+        difficultyLabel.setHorizontalAlignment(JLabel.RIGHT);
+        topPanel.add(difficultyLabel, BorderLayout.EAST);
+
     }
 
     private void createMenu() {
