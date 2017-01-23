@@ -45,7 +45,6 @@ public class ControllerMineSweeper {
             }
         }
 
-        gameDifficulty = GameDifficulty.EASY; //placeholder
         setGameDifficulty();
         modelBoard.placeMines(modelBoard.getNrOfMines());
         modelBoard.setFlags(modelBoard.getNrOfMines());
@@ -55,7 +54,6 @@ public class ControllerMineSweeper {
     /**
      * Method used to set the number of mines to be placed.
      * Harder difficulty adds more mines to the field.
-     *
      */
     public void setGameDifficulty() {//GameDifficulty gameDifficulty) {
         Object[] possibilities = {
@@ -64,29 +62,29 @@ public class ControllerMineSweeper {
                 GameDifficulty.NORMAL.getMessage(),
                 GameDifficulty.HARD.getMessage(),
                 GameDifficulty.VERY_HARD.getMessage()};
-        String difficulty = (String)JOptionPane.showInputDialog(null, "Choose difficulty", null,
+        String difficulty = (String) JOptionPane.showInputDialog(null, "Choose difficulty", null,
                 JOptionPane.PLAIN_MESSAGE, null, possibilities, GameDifficulty.EASY.getMessage());
 
         //GameDifficulty difficulty = gameDifficulty;
         switch (difficulty) {
             case "Very Easy":
-                modelBoard.setNrOfMines(5);
+                modelBoard.setNrOfMines(GameDifficulty.VERY_EASY.getMines());
                 System.out.println("set game to very easy");
                 break;
             case "Easy":
-                modelBoard.setNrOfMines(10);
+                modelBoard.setNrOfMines(GameDifficulty.EASY.getMines());
                 System.out.println("set game to easy");
                 break;
             case "Normal":
-                modelBoard.setNrOfMines(15);
+                modelBoard.setNrOfMines(GameDifficulty.NORMAL.getMines());
                 System.out.println("set game to normal");
                 break;
             case "Hard":
-                modelBoard.setNrOfMines(20);
+                modelBoard.setNrOfMines(GameDifficulty.HARD.getMines());
                 System.out.println("set game to hard");
                 break;
             case "Very Hard":
-                modelBoard.setNrOfMines(25);
+                modelBoard.setNrOfMines(GameDifficulty.VERY_HARD.getMines());
                 System.out.println("set game to very hard");
                 break;
             default:
@@ -94,7 +92,6 @@ public class ControllerMineSweeper {
         }
         viewSweeper.setDifficultyLabel(" | Current difficulty " + difficulty + " | ");
     }
-
 
 
     /**
@@ -137,6 +134,7 @@ public class ControllerMineSweeper {
                         if (e.getSource() == viewSweeper.getCells()[i][j]) {
                             modelBoard.cellClicked(i, j);
                             modelBoard.move(i, j);
+                            viewSweeper.getMessages().setText(modelBoard.getMessage());
                         }
                     }
                 }
@@ -166,6 +164,7 @@ public class ControllerMineSweeper {
                     for (int j = 0; j < viewSweeper.getCells()[i].length; j++) {
                         if (e.getSource() == viewSweeper.getCells()[i][j]) {
                             modelBoard.toggleMarkMine(i, j);
+                            viewSweeper.getMessages().setText(modelBoard.getMessage());
                         }
                     }
                 }

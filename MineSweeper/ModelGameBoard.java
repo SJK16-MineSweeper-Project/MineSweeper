@@ -29,6 +29,7 @@ public class ModelGameBoard implements Game {
     private long tStart;
     private long tRes;
     private int flags;
+    private String message;
 
     public ModelGameBoard(ViewMineSweeper viewSweeper, int value) {
         this.viewSweeper = viewSweeper;
@@ -63,6 +64,11 @@ public class ModelGameBoard implements Game {
 
     public void cellClicked(int i, int j) {
         System.out.println(cells[i][j]);
+        if(cells[i][j] != 0)
+            message = "Clicked cell, it was a " + cells[i][j];
+        else
+            message = "Clicked cell, it was empty";
+
     }
 
     public int cellValue(int i, int j) {
@@ -222,6 +228,7 @@ public class ModelGameBoard implements Game {
             }
             if (cells[i][j] == CellValue.MINE.getValue()) {
                 viewSweeper.getCells()[i][j].setText("Bomb");
+
                 for (int e = 0; e < viewSweeper.getCells().length; ++e) {
                     for (int c = 0; c < viewSweeper.getCells()[e].length; ++c) {
                         if (cells[e][c] != CellValue.OPEN.getValue()) {
@@ -258,6 +265,18 @@ public class ModelGameBoard implements Game {
         else {
             viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
         }
+
+        return move;
+    }
+
+    public void addFlag() {
+        --flags;
+        viewSweeper.setFlagsLabel(flags);
+    }
+
+    public void removeFlag() {
+        ++flags;
+        viewSweeper.setFlagsLabel(flags);;
     }
 
     public void toggleCellVisibility(int i, int j, boolean value) {
@@ -279,6 +298,7 @@ public class ModelGameBoard implements Game {
         if(openedCells == rows*columns - nrOfMines || isGoing == false) {
             System.out.println("All cells opened. Game end.");
             viewSweeper.setGameStatus("Game over");
+            message = "Game Over!";
             stopTimer();
             return false;
         }
@@ -293,6 +313,7 @@ public class ModelGameBoard implements Game {
             cells[i][j] = mines[i][j];
             mines[i][j] = 0;
             viewSweeper.getCells()[i][j].setText("");
+            message = "removed flag from";
             removeFlag();
         }
         else {
@@ -300,6 +321,7 @@ public class ModelGameBoard implements Game {
                 mines[i][j] = cells[i][j];
                 cells[i][j] = CellValue.MAYBEMINE.getValue();
                 viewSweeper.getCells()[i][j].setText("Mine");
+                message = "Set flag";
                 addFlag();
             }
         }
@@ -309,7 +331,6 @@ public class ModelGameBoard implements Game {
     public void addTimer() {
         ActionListener timerPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                System.out.println(timePlayed());
                 viewSweeper.setTimerLabel(timePlayed());
             }
         };
@@ -371,7 +392,7 @@ public class ModelGameBoard implements Game {
 
     @Override
     public String getMessage() {
-        return null;
+        return message;
     }
 
     public Timer getTimer() {

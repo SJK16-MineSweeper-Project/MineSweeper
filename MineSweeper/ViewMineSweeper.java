@@ -11,18 +11,20 @@ public class ViewMineSweeper extends JFrame {
     private JPanel mainPanel;
     private JPanel panel;
     private JPanel topPanel;
+    private JPanel messageBoard;
 
     private JLabel timerLabel; //placeholder, currently shows difficulty
     private JLabel difficultyLabel;
     private JLabel flagsLabel;
     private JLabel gameStatus;
     private JLabel bombsOnBoard;
+    private JLabel messages;
 
     private JMenuBar menuBar;
     private JMenuItem exitOption;
     private JMenuItem newGameOption;
 
-    private JButton cells[][];
+    private JButton[][] cells;
 
     public ViewMineSweeper() {
         createMenu();
@@ -47,9 +49,16 @@ public class ViewMineSweeper extends JFrame {
         panel.setOpaque(true);
         panel.setBackground(Color.DARK_GRAY);
 
+        //create message board
+        messageBoard = new JPanel();
+        messageBoard.setLayout(new FlowLayout());
+        messageBoard.setOpaque(true);
+        messageBoard.setBackground(Color.DARK_GRAY);
+
         //add panels to main panel
         mainPanel.add(topPanel, BorderLayout.PAGE_START);
         mainPanel.add(panel, BorderLayout.CENTER);
+        mainPanel.add(messageBoard, BorderLayout.PAGE_END);
 
         //window settings
         JFrame frame = new JFrame("Minesweeper");
@@ -92,8 +101,10 @@ public class ViewMineSweeper extends JFrame {
         timerLabel.setForeground(Color.WHITE);
         topPanel.add(timerLabel, FlowLayout.RIGHT);
 
-
-
+        //create messages
+        messages = new JLabel();
+        messages.setForeground(Color.WHITE);
+        messageBoard.add(messages);
     }
 
     private void createMenu() {
@@ -114,17 +125,17 @@ public class ViewMineSweeper extends JFrame {
 
     private void createCells() {
 
-        cells = new JButton[8][8];
-        for (int i = 0; i < cells.length; i++) {
-            for (int j = 0; j < cells[i].length; j++) {
-                cells[i][j] = new JButton();
-                cells[i][j].setContentAreaFilled(false);
-                cells[i][j].setBorderPainted(true);
-                cells[i][j].setPreferredSize(new Dimension(40, 40));
-                cells[i][j].setFont(new Font("Tahoma", Font.PLAIN, 20));
-                cells[i][j].setBackground(new Color(0, 204, 0));
-                cells[i][j].getModel().setEnabled(true);
-                panel.add(cells[i][j]);
+        setCells(new JButton[8][8]);
+        for (int i = 0; i < getCells().length; i++) {
+            for (int j = 0; j < getCells()[i].length; j++) {
+                getCells()[i][j] = new JButton();
+                getCells()[i][j].setContentAreaFilled(false);
+                getCells()[i][j].setBorderPainted(true);
+                getCells()[i][j].setPreferredSize(new Dimension(40, 40));
+                getCells()[i][j].setFont(new Font("Tahoma", Font.PLAIN, 20));
+                getCells()[i][j].setBackground(new Color(0, 204, 0));
+                getCells()[i][j].getModel().setEnabled(true);
+                panel.add(getCells()[i][j]);
             }
         }
 
@@ -160,4 +171,11 @@ public class ViewMineSweeper extends JFrame {
         return this.exitOption;
     }
 
+    public void setCells(JButton[][] cells) {
+        this.cells = cells;
+    }
+
+    public JLabel getMessages() {
+        return messages;
+    }
 }
