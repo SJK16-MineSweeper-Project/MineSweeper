@@ -30,6 +30,7 @@ public class ControllerMineSweeper {
         this.exitListener = new ExitListener();
 
         viewSweeper.getExitOption().addActionListener(exitListener);
+        viewSweeper.setGameStatus(modelBoard.getStatus(0, 0));
 
         // Add listener to all cells
         for (int i = 0; i < viewSweeper.getCells().length; i++) {
@@ -46,7 +47,7 @@ public class ControllerMineSweeper {
         }
 
         gameDifficulty = GameDifficulty.EASY; //placeholder
-        setGameDifficulty(gameDifficulty);
+        setGameDifficulty();
         modelBoard.placeMines(modelBoard.getNrOfMines());
         modelBoard.setCellValues();
     }
@@ -55,35 +56,45 @@ public class ControllerMineSweeper {
      * Method used to set the number of mines to be placed.
      * Harder difficulty adds more mines to the field.
      *
-     * @param gameDifficulty
      */
-    public void setGameDifficulty(GameDifficulty gameDifficulty) {
-        GameDifficulty difficulty = gameDifficulty;
+    public void setGameDifficulty() {//GameDifficulty gameDifficulty) {
+        Object[] possibilities = {
+                GameDifficulty.VERY_EASY.getMessage(),
+                GameDifficulty.EASY.getMessage(),
+                GameDifficulty.NORMAL.getMessage(),
+                GameDifficulty.HARD.getMessage(),
+                GameDifficulty.VERY_HARD.getMessage()};
+        String difficulty = (String)JOptionPane.showInputDialog(null, "Choose difficulty", null,
+                JOptionPane.PLAIN_MESSAGE, null, possibilities, GameDifficulty.EASY.getMessage());
+
+        //GameDifficulty difficulty = gameDifficulty;
         switch (difficulty) {
-            case VERY_EASY:
+            case "Very Easy":
                 modelBoard.setNrOfMines(5);
                 System.out.println("set game to very easy");
                 break;
-            case EASY:
+            case "Easy":
                 modelBoard.setNrOfMines(10);
                 System.out.println("set game to easy");
                 break;
-            case NORMAL:
+            case "Normal":
                 modelBoard.setNrOfMines(15);
                 System.out.println("set game to normal");
                 break;
-            case HARD:
+            case "Hard":
                 modelBoard.setNrOfMines(20);
                 System.out.println("set game to hard");
                 break;
-            case VERY_HARD:
+            case "Very Hard":
                 modelBoard.setNrOfMines(25);
                 System.out.println("set game to very hard");
                 break;
             default:
                 break;
         }
+        viewSweeper.setTimerLabel(" | Current difficulty " + difficulty + " | ");
     }
+
 
 
     /**
@@ -146,6 +157,7 @@ public class ControllerMineSweeper {
             this.viewSweeper = viewSweeper;
             this.modelBoard = modelBoard;
         }
+
         @Override
         public void mouseClicked(MouseEvent e) {
             if (SwingUtilities.isRightMouseButton(e) || e.isControlDown()) {
@@ -165,14 +177,17 @@ public class ControllerMineSweeper {
         public void mouseEntered(MouseEvent e) {
 
         }
+
         @Override
         public void mouseExited(MouseEvent e) {
 
         }
+
         @Override
         public void mousePressed(MouseEvent e) {
 
         }
+
         @Override
         public void mouseReleased(MouseEvent e) {
 
