@@ -39,9 +39,9 @@ public class ControllerMineSweeper {
         }
 
         // Add right-clicked-listener to all cells
-        for (int i = 0; i < viewSweeper.cells.length; i++) {
-            for (int j = 0; j < viewSweeper.cells[i].length; j++) {
-                viewSweeper.cells[i][j].addMouseListener(mouseListener);
+        for (int i = 0; i < viewSweeper.getCells().length; i++) {
+            for (int j = 0; j < viewSweeper.getCells()[i].length; j++) {
+                viewSweeper.getCells()[i][j].addMouseListener(mouseListener);
             }
         }
 
@@ -162,9 +162,9 @@ public class ControllerMineSweeper {
         public void mouseClicked(MouseEvent e) {
             if (SwingUtilities.isRightMouseButton(e) || e.isControlDown()) {
                 System.out.println("Right Worked");
-                for (int i = 0; i < viewSweeper.cells.length; i++) {
-                    for (int j = 0; j < viewSweeper.cells[i].length; j++) {
-                        if (e.getSource() == viewSweeper.cells[i][j]) {
+                for (int i = 0; i < viewSweeper.getCells().length; i++) {
+                    for (int j = 0; j < viewSweeper.getCells()[i].length; j++) {
+                        if (e.getSource() == viewSweeper.getCells()[i][j]) {
                             modelBoard.toggleMarkMine(i, j);
                         }
                     }

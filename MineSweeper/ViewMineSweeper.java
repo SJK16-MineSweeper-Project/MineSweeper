@@ -22,7 +22,7 @@ public class ViewMineSweeper extends JFrame {
     private JMenuItem exitOption;
     private JMenuItem newGameOption;
 
-    JButton cells[][];
+    private JButton cells[][];
 
     public ViewMineSweeper() {
         createMenu();

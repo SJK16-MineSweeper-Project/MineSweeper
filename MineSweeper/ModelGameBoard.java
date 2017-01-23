@@ -1,3 +1,7 @@
+// Show values of all cells if game over
+// Singelton
+// Make room for timer, flags
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -164,7 +168,7 @@ public class ModelGameBoard implements Game {
                 if (i != 0) {
                     if (cells[i - 1][j] == CellValue.EMPTY.getValue()) {
                         cells[i - 1][j] = CellValue.OPEN.getValue();
-                        viewSweeper.getCells()[i - 1][j].setEnabled(false);
+                        toggleCellVisibility(i - 1, j, false);
                         ++openedCells;
                         System.out.println("n0: " + openedCells);
                         openNeighbours(i - 1, j);
@@ -175,7 +179,7 @@ public class ModelGameBoard implements Game {
                 if (j != 0) {
                     if (cells[i][j - 1] == CellValue.EMPTY.getValue()) {
                         cells[i][j - 1] = CellValue.OPEN.getValue();
-                        viewSweeper.getCells()[i][j - 1].setEnabled(false);
+                        toggleCellVisibility(i, j - 1, false);
                         ++openedCells;
                         System.out.println("n1: " + openedCells);
                         openNeighbours(i, j - 1);
@@ -186,7 +190,7 @@ public class ModelGameBoard implements Game {
                 if (j != cells.length - 1) {
                     if (cells[i][j + 1] == CellValue.EMPTY.getValue()) {
                         cells[i][j + 1] = CellValue.OPEN.getValue();
-                        viewSweeper.getCells()[i][j + 1].setEnabled(false);
+                        toggleCellVisibility(i, j + 1, false);
                         ++openedCells;
                         System.out.println("n2: " + openedCells);
                         openNeighbours(i, j + 1);
@@ -197,7 +201,7 @@ public class ModelGameBoard implements Game {
                 if (i != cells.length - 1) {
                     if (cells[i + 1][j] == CellValue.EMPTY.getValue()) {
                         cells[i + 1][j] = CellValue.OPEN.getValue();
-                        viewSweeper.getCells()[i + 1][j].setEnabled(false);
+                        toggleCellVisibility(i + 1, j, false);
                         ++openedCells;
                         System.out.println("n3: " + openedCells);
                         openNeighbours(i + 1, j);
@@ -217,22 +221,27 @@ public class ModelGameBoard implements Game {
                 System.out.println("Starting elapsed time: " + tStart);
             }
             if (cells[i][j] == CellValue.MINE.getValue()) {
-                viewSweeper.cells[i][j].setText("Bomb");
-                for (int e = 0; e < viewSweeper.cells.length; ++e)
-                    for (int c = 0; c < viewSweeper.cells[e].length; ++c)
-                        viewSweeper.cells[e][c].setEnabled(false);
+                viewSweeper.getCells()[i][j].setText("Bomb");
+                for (int e = 0; e < viewSweeper.getCells().length; ++e) {
+                    for (int c = 0; c < viewSweeper.getCells()[e].length; ++c) {
+                        if (cells[e][c] != CellValue.OPEN.getValue()) {
+                            convertCellValuesToString(e, c);
+                        }
+                        toggleCellVisibility(e, c, false);
+                    }
+                }
                 System.out.println("Bomb. Game over!");
                 isGoing = false;
                 gameStatus();
             } else if (cells[i][j] == CellValue.EMPTY.getValue()) {
                 cells[i][j] = CellValue.OPEN.getValue();
-                viewSweeper.cells[i][j].setEnabled(false);
+                toggleCellVisibility(i, j, false);
                 ++openedCells;
                 openNeighbours(i, j);
                 gameStatus();
             } else {
-                viewSweeper.cells[i][j].setEnabled(false);
-                viewSweeper.cells[i][j].setText(String.valueOf(cells[i][j]));
+                toggleCellVisibility(i, j, false);
+                convertCellValuesToString(i, j);
                 ++openedCells;
                 gameStatus();
             }
@@ -240,6 +249,19 @@ public class ModelGameBoard implements Game {
         }
 
         return move;
+    }
+
+    public void convertCellValuesToString(int i, int j) {
+        if(cells[i][j] == CellValue.MINE.getValue()) {
+            viewSweeper.getCells()[i][j].setText(String.valueOf("Mine"));
+        }
+        else {
+            viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
+        }
+    }
+
+    public void toggleCellVisibility(int i, int j, boolean value) {
+        viewSweeper.getCells()[i][j].setEnabled(value);
     }
 
     public void addFlag() {
@@ -270,14 +292,14 @@ public class ModelGameBoard implements Game {
         if(cells[i][j] == CellValue.MAYBEMINE.getValue()) {
             cells[i][j] = mines[i][j];
             mines[i][j] = 0;
-            viewSweeper.cells[i][j].setText("");
+            viewSweeper.getCells()[i][j].setText("");
             removeFlag();
         }
         else {
             if(flags > 0) {
                 mines[i][j] = cells[i][j];
                 cells[i][j] = CellValue.MAYBEMINE.getValue();
-                viewSweeper.cells[i][j].setText("Mine");
+                viewSweeper.getCells()[i][j].setText("Mine");
                 addFlag();
             }
         }
