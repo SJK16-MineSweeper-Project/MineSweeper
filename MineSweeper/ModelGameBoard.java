@@ -1,6 +1,3 @@
-import javafx.scene.control.Cell;
-import static java.lang.Math.toIntExact;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,7 +7,7 @@ import java.util.Random;
 /**
  * Created by Maxie on 2017-01-17.
  */
-public class ModelGameBoard {
+public class ModelGameBoard implements Game {
 
     private ViewMineSweeper viewSweeper;
     private Timer timer;
@@ -22,9 +19,10 @@ public class ModelGameBoard {
     private int rows;
     private int columns;
     private static int nrOfMines;
+    private boolean isGoing = true;
     private int openedCells;
-    long tStart;
-    long tRes;
+    private long tStart;
+    private long tRes;
 
     public ModelGameBoard(ViewMineSweeper viewSweeper, int value) {
         this.viewSweeper = viewSweeper;
@@ -53,6 +51,7 @@ public class ModelGameBoard {
         }
         System.out.println("placed " + nrOfMines + " mines");
         System.out.println("placedMines is now " + placedMines);
+        viewSweeper.setBombs(placedMines);
     }
 
     public void cellClicked(int i, int j) {
@@ -213,8 +212,12 @@ public class ModelGameBoard {
         }
         if(cells[i][j] == CellValue.MINE.getValue()) {
             viewSweeper.cells[i][j].setText("Bomb");
-            viewSweeper.cells[i][j].setEnabled(false);
+            for(int e = 0; e < viewSweeper.cells.length; ++e)
+                for(int c = 0; c < viewSweeper.cells[e].length; ++c)
+                    viewSweeper.cells[e][c].setEnabled(false);
             System.out.println("Bomb. Game over!");
+            isGoing = false;
+            gameStatus();
         }
         else if(cells[i][j] == CellValue.EMPTY.getValue()) {
             cells[i][j] = CellValue.OPEN.getValue();
@@ -233,8 +236,9 @@ public class ModelGameBoard {
 
     public boolean gameStatus() {
         System.out.println("Cells opened" + openedCells);
-        if(openedCells == rows*columns - nrOfMines) {
+        if(openedCells == rows*columns - nrOfMines || isGoing == false) {
             System.out.println("All cells opened. Game end.");
+            viewSweeper.setGameStatus("Game over");
             stopTimer();
             return false;
         }
@@ -254,7 +258,8 @@ public class ModelGameBoard {
         int delay = 1000;
 
         timer = new Timer(delay, timerPerformer);
-        timer.setInitialDelay(delay);
+        getTimer().setInitialDelay(delay);
+
     }
 
     public long timePlayed() {
@@ -264,11 +269,11 @@ public class ModelGameBoard {
     }
 
     public void stopTimer() {
-        timer.stop();
+        getTimer().stop();
     }
 
     public void startTimer() {
-        timer.start();
+        getTimer().start();
     }
 
     /**
@@ -292,5 +297,30 @@ public class ModelGameBoard {
 
     public int[][] getCells() {
         return cells;
+    }
+
+    @Override
+    public boolean move(int i, int j) {
+        return false;
+    }
+
+    @Override
+    public String getStatus(int i, int j) {
+        boolean isGoing = gameStatus();
+        String gameStatus;
+        if(isGoing == true)
+            gameStatus = "Game active";
+        else
+            gameStatus = "Game over";
+        return gameStatus;
+    }
+
+    @Override
+    public String getMessage() {
+        return null;
+    }
+
+    public Timer getTimer() {
+        return timer;
     }
 }

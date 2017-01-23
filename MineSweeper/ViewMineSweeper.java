@@ -8,7 +8,13 @@ import java.awt.event.WindowEvent;
  */
 public class ViewMineSweeper extends JFrame {
 
+    private JPanel mainPanel;
     private JPanel panel;
+    private JPanel topPanel;
+
+    private JLabel timerLabel; //placeholder, currently shows difficulty
+    private JLabel gameStatus;
+    private JLabel bombsOnBoard;
 
     private JMenuBar menuBar;
     private JMenuItem exitOption;
@@ -23,14 +29,29 @@ public class ViewMineSweeper extends JFrame {
     }
 
     private void createWindow() {
+        //create main panel
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        //create top panel
+        topPanel = new JPanel();
+        topPanel.setLayout(new FlowLayout());
+        topPanel.setOpaque(true);
+        topPanel.setBackground(Color.DARK_GRAY);
+
+        //create game board
         panel = new JPanel();
         panel.setLayout(new GridLayout(8,8));
         panel.setOpaque(true);
         panel.setBackground(Color.DARK_GRAY);
 
+        //add panels to main panel
+        mainPanel.add(topPanel, BorderLayout.PAGE_START);
+        mainPanel.add(panel, BorderLayout.CENTER);
+
         //window settings
         JFrame frame = new JFrame("Minesweeper");
-        frame.add(panel);
+        frame.add(mainPanel);
         frame.setPreferredSize(new Dimension(500, 500));
         frame.setLocationRelativeTo(null); //center window
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -43,6 +64,24 @@ public class ViewMineSweeper extends JFrame {
                 System.exit(0);
             }
         });
+
+        //create bomb label
+        bombsOnBoard = new JLabel();
+        bombsOnBoard.setForeground(Color.WHITE);
+        topPanel.add(bombsOnBoard, FlowLayout.LEFT);
+
+        //create timer
+        timerLabel = new JLabel();
+        timerLabel.setForeground(Color.WHITE);
+        topPanel.add(timerLabel, FlowLayout.CENTER);
+
+        //create gameStatus
+        gameStatus = new JLabel();
+        gameStatus.setForeground(Color.WHITE);
+        topPanel.add(gameStatus, FlowLayout.RIGHT);
+
+
+
     }
 
     private void createMenu() {
@@ -79,6 +118,19 @@ public class ViewMineSweeper extends JFrame {
 
     }
 
+    public void setGameStatus (String message) {
+        gameStatus.setText(message);
+    }
+
+    public void setBombs (int bombs) {
+        String message = Integer.toString(bombs);
+        bombsOnBoard.setText("Bombs on field: " + message);
+    }
+
+    public void setTimerLabel (String message) {
+        timerLabel.setText(message);
+    }
+
     public JButton[][] getCells() {
         return cells;
     }
@@ -86,6 +138,5 @@ public class ViewMineSweeper extends JFrame {
     public JMenuItem getExitOption() {
         return this.exitOption;
     }
-
 
 }
