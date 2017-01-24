@@ -13,7 +13,9 @@ public class ViewMineSweeper extends JFrame {
     private JPanel topPanel;
     private JPanel messageBoard;
 
-    private JLabel timerLabel; //placeholder, currently shows difficulty
+    private JFrame frame;
+
+    private JLabel timerLabel;
     private JLabel difficultyLabel;
     private JLabel flagsLabel;
     private JLabel gameStatus;
@@ -26,13 +28,14 @@ public class ViewMineSweeper extends JFrame {
 
     private JButton[][] cells;
 
-    public ViewMineSweeper() {
+    public ViewMineSweeper(int rows, int columns) {
+        this.cells = new JButton[rows][columns];
         createMenu();
-        createWindow();
+        createWindow(rows, columns);
         createCells();
     }
 
-    private void createWindow() {
+    private void createWindow(int rows, int columns) {
 
         //create main panel
         mainPanel = new JPanel();
@@ -46,7 +49,7 @@ public class ViewMineSweeper extends JFrame {
 
         //create game board
         panel = new JPanel();
-        panel.setLayout(new GridLayout(8, 8));
+        panel.setLayout(new GridLayout(rows, columns));
         panel.setOpaque(true);
         panel.setBackground(Color.DARK_GRAY);
 
@@ -62,7 +65,7 @@ public class ViewMineSweeper extends JFrame {
         mainPanel.add(messageBoard, BorderLayout.PAGE_END);
 
         //window settings
-        JFrame frame = new JFrame("Minesweeper");
+        frame = new JFrame("Minesweeper");
         frame.add(mainPanel);
         frame.setPreferredSize(new Dimension(500, 500));
         frame.setLocationRelativeTo(null); //center window
@@ -135,15 +138,16 @@ public class ViewMineSweeper extends JFrame {
 
     private void createCells() {
 
-        setCells(new JButton[8][8]);
+        setCells(cells);
         for (int i = 0; i < getCells().length; i++) {
             for (int j = 0; j < getCells()[i].length; j++) {
                 getCells()[i][j] = new JButton();
-                getCells()[i][j].setContentAreaFilled(false);
+                getCells()[i][j].setOpaque(true);
+                getCells()[i][j].setContentAreaFilled(true);
                 getCells()[i][j].setBorderPainted(true);
                 getCells()[i][j].setPreferredSize(new Dimension(40, 40));
                 getCells()[i][j].setFont(new Font("Tahoma", Font.PLAIN, 20));
-                getCells()[i][j].setBackground(new Color(0, 204, 0));
+                getCells()[i][j].setBackground(new Color(117, 114, 115));
                 getCells()[i][j].getModel().setEnabled(true);
                 panel.add(getCells()[i][j]);
             }

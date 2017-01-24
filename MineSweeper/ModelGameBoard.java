@@ -3,6 +3,7 @@
 // Make room for timer, flags
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
@@ -29,10 +30,11 @@ public class ModelGameBoard implements Game {
     private int flags;
     private String message;
 
-    public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j) {
+    public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j, int mines) {
         this.viewSweeper = viewSweeper;
         this.rows = i; //placeholder
         this.columns = j; //placeholder
+        this.nrOfMines = mines;
         this.cells = new int[rows][columns];
         this.mines = new int[rows][columns];
         addTimer();
@@ -225,7 +227,7 @@ public class ModelGameBoard implements Game {
                 System.out.println("Starting elapsed time: " + tStart);
             }
             if (cells[i][j] == CellValue.MINE.getValue()) {
-                viewSweeper.getCells()[i][j].setText("Bomb");
+                viewSweeper.getCells()[i][j].setText("*");
 
                 for (int e = 0; e < viewSweeper.getCells().length; ++e) {
                     for (int c = 0; c < viewSweeper.getCells()[e].length; ++c) {
@@ -258,14 +260,16 @@ public class ModelGameBoard implements Game {
 
     public void convertCellValuesToString(int i, int j) {
         if (cells[i][j] == CellValue.MINE.getValue()) {
-            viewSweeper.getCells()[i][j].setText(String.valueOf("Mine"));
+            viewSweeper.getCells()[i][j].setText(String.valueOf("*"));
         } else {
             viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
         }
     }
 
     public void toggleCellVisibility(int i, int j, boolean value) {
+
         viewSweeper.getCells()[i][j].setEnabled(value);
+        viewSweeper.getCells()[i][j].setBackground(new Color(99, 99, 99));
     }
 
     public void addFlag() {
@@ -298,13 +302,15 @@ public class ModelGameBoard implements Game {
             cells[i][j] = mines[i][j];
             mines[i][j] = 0;
             viewSweeper.getCells()[i][j].setText("");
+            viewSweeper.getCells()[i][j].setForeground(new Color(170, 167, 168));
             message = "removed flag from";
             removeFlag();
         } else {
             if (flags > 0) {
                 mines[i][j] = cells[i][j];
                 cells[i][j] = CellValue.MAYBEMINE.getValue();
-                viewSweeper.getCells()[i][j].setText("Mine");
+                viewSweeper.getCells()[i][j].setText("F");
+                viewSweeper.getCells()[i][j].setForeground(new Color(255,0,0));
                 message = "Set flag";
                 addFlag();
             }
