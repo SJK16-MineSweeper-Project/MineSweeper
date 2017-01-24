@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * Created by Maxie on 2017-01-17.
@@ -13,18 +15,19 @@ public class ControllerMineSweeper {
 
     private CellListener cellListener;
     private ExitListener exitListener;
-
-    private GameDifficulty gameDifficulty;
+    private RightClickListener mouseListener;
 
     public ControllerMineSweeper() {
         this.viewSweeper = new ViewMineSweeper();
-        this.modelBoard = new ModelGameBoard(viewSweeper, 2);
+        this.modelBoard = new ModelGameBoard(viewSweeper, 8, 8); //i for rows, j for columns
         this.modelSweeper = new ModelMineSweeper();
 
         this.cellListener = new CellListener(viewSweeper, modelBoard);
+        this.mouseListener = new RightClickListener(viewSweeper, modelBoard);
         this.exitListener = new ExitListener();
 
         viewSweeper.getExitOption().addActionListener(exitListener);
+        viewSweeper.setGameStatus(modelBoard.getStatus(0, 0));
 
         // Add listener to all cells
         for (int i = 0; i < viewSweeper.getCells().length; i++) {
@@ -33,46 +36,58 @@ public class ControllerMineSweeper {
             }
         }
 
-        gameDifficulty = GameDifficulty.EASY; //placeholder
-        setGameDifficulty(gameDifficulty);
+        // Add right-clicked-listener to all cells
+        for (int i = 0; i < viewSweeper.getCells().length; i++) {
+            for (int j = 0; j < viewSweeper.getCells()[i].length; j++) {
+                viewSweeper.getCells()[i][j].addMouseListener(mouseListener);
+            }
+        }
+
+        setGameDifficulty();
         modelBoard.placeMines(modelBoard.getNrOfMines());
+        modelBoard.setFlags(modelBoard.getNrOfMines());
         modelBoard.setCellValues();
-
-
     }
 
     /**
      * Method used to set the number of mines to be placed.
      * Harder difficulty adds more mines to the field.
-     *
-     * @param gameDifficulty
      */
-    public void setGameDifficulty(GameDifficulty gameDifficulty) {
-        GameDifficulty difficulty = gameDifficulty;
+    public void setGameDifficulty() {
+        Object[] possibilities = {
+                GameDifficulty.VERY_EASY.getMessage(),
+                GameDifficulty.EASY.getMessage(),
+                GameDifficulty.NORMAL.getMessage(),
+                GameDifficulty.HARD.getMessage(),
+                GameDifficulty.VERY_HARD.getMessage()};
+        String difficulty = (String) JOptionPane.showInputDialog(null, "Choose difficulty", null,
+                JOptionPane.PLAIN_MESSAGE, null, possibilities, GameDifficulty.EASY.getMessage());
+
         switch (difficulty) {
-            case VERY_EASY:
-                modelBoard.setNrOfMines(5);
+            case "Very Easy":
+                modelBoard.setNrOfMines(GameDifficulty.VERY_EASY.getMines());
                 System.out.println("set game to very easy");
                 break;
-            case EASY:
-                modelBoard.setNrOfMines(10);
+            case "Easy":
+                modelBoard.setNrOfMines(GameDifficulty.EASY.getMines());
                 System.out.println("set game to easy");
                 break;
-            case NORMAL:
-                modelBoard.setNrOfMines(15);
+            case "Normal":
+                modelBoard.setNrOfMines(GameDifficulty.NORMAL.getMines());
                 System.out.println("set game to normal");
                 break;
-            case HARD:
-                modelBoard.setNrOfMines(20);
+            case "Hard":
+                modelBoard.setNrOfMines(GameDifficulty.HARD.getMines());
                 System.out.println("set game to hard");
                 break;
-            case VERY_HARD:
-                modelBoard.setNrOfMines(25);
+            case "Very Hard":
+                modelBoard.setNrOfMines(GameDifficulty.VERY_HARD.getMines());
                 System.out.println("set game to very hard");
                 break;
             default:
                 break;
         }
+        viewSweeper.setDifficultyLabel("Current difficulty: " + difficulty);
     }
 
 
@@ -115,13 +130,66 @@ public class ControllerMineSweeper {
                     if (viewSweeper.getCells()[i][j].getModel().isEnabled()) {
                         if (e.getSource() == viewSweeper.getCells()[i][j]) {
                             modelBoard.cellClicked(i, j);
-                            modelBoard.openCell(i, j);
+                            modelBoard.move(i, j);
+                            viewSweeper.getMessages().setText(modelBoard.getMessage());
                         }
                     }
                 }
             }
         }
     }
+
+    private class RightClickListener implements MouseListener {
+
+        /**
+         * Action performed after button is right-clicked
+         */
+
+        private ViewMineSweeper viewSweeper;
+        private ModelGameBoard modelBoard;
+
+        public RightClickListener(ViewMineSweeper viewSweeper, ModelGameBoard modelBoard) {
+            this.viewSweeper = viewSweeper;
+            this.modelBoard = modelBoard;
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (SwingUtilities.isRightMouseButton(e) || e.isControlDown()) {
+                System.out.println("Right Worked");
+                for (int i = 0; i < viewSweeper.getCells().length; i++) {
+                    for (int j = 0; j < viewSweeper.getCells()[i].length; j++) {
+                        if (e.getSource() == viewSweeper.getCells()[i][j]) {
+                            modelBoard.toggleMarkMine(i, j);
+                            viewSweeper.getMessages().setText(modelBoard.getMessage());
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+    }
+
 
     public static void main(String[] args) {
         new ControllerMineSweeper();
