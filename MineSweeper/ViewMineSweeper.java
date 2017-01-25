@@ -208,6 +208,10 @@ public class ViewMineSweeper extends JFrame {
         return this.exitOption;
     }
 
+    public JMenuItem getNewGameOption() {
+        return this.newGameOption;
+    }
+
     public void setCells(JButton[][] cells) {
         this.cells = cells;
     }

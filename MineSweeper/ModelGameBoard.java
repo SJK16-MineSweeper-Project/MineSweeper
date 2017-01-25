@@ -125,7 +125,7 @@ public class ModelGameBoard implements Game {
                 }
             }
             if (n == 2) {
-                if (i == 0 || j == cells.length - 1) {
+                if (i == 0 || j == cells[i].length - 1) {
                     cell = CellValue.EMPTY.getValue();
                 } else {
                     cell = cells[i - 1][j + 1];
@@ -139,7 +139,7 @@ public class ModelGameBoard implements Game {
                 }
             }
             if (n == 4) {
-                if (j == cells.length - 1) {
+                if (j == cells[i].length - 1) {
                     cell = CellValue.EMPTY.getValue();
                 } else {
                     cell = cells[i][j + 1];
@@ -160,7 +160,7 @@ public class ModelGameBoard implements Game {
                 }
             }
             if (n == 7) {
-                if (i == cells.length - 1 || j == cells.length - 1) {
+                if (i == cells.length - 1 || j == cells[i].length - 1) {
                     cell = CellValue.EMPTY.getValue();
                 } else {
                     cell = cells[i + 1][j + 1];
