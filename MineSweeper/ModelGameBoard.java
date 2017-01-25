@@ -172,7 +172,9 @@ public class ModelGameBoard implements Game {
     }
 
     public void setCellValues() {
+        System.out.println("Length i: " + cells.length);
         for (int i = 0; i < cells.length; i++) {
+            System.out.println("Length j: " + cells[i].length);
             for (int j = 0; j < cells[i].length; j++) {
                 if (cells[i][j] != CellValue.MINE.getValue()) {
                     // calculate value, 0 for non-adjacent cells and >0 for mine-adjacent
@@ -189,11 +191,11 @@ public class ModelGameBoard implements Game {
         if (c < CellValue.MINE.getValue()) {
             cells[i][j] = CellValue.EMPTY.getValue();
             cellValue = CellValue.EMPTY.getValue();
-            System.out.println(cells[i][j]);
+            System.out.println("Empty cell: " + i + ", " + j + ". Value " + cells[i][j]);
         } else {
             cells[i][j] = c / CellValue.MINE.getValue();
             cellValue = c / CellValue.MINE.getValue();
-            System.out.println(cells[i][j]);
+            System.out.println("Mine-adjacent cell: " + i + ", " + j + ". Value " + cells[i][j]);
         }
         return cellValue;
     }
@@ -315,7 +317,7 @@ public class ModelGameBoard implements Game {
     }
 
     public boolean gameStatus() {
-        System.out.println("Cells opened" + openedCells);
+        System.out.println("Cells opened " + openedCells);
         if (openedCells == rows * columns - nrOfMines && isGoing == false) {
             System.out.println("All cells opened. Game end.");
             viewSweeper.setGameStatus("Game ended succefully");
