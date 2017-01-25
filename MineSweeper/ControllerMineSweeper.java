@@ -72,7 +72,7 @@ public class ControllerMineSweeper {
 
             int option = JOptionPane.showConfirmDialog(null, message, "Enter custom settings",
                     JOptionPane.OK_CANCEL_OPTION);
-            if (option == JOptionPane.OK_OPTION) {
+            if (option == JOptionPane.OK_OPTION && rows != 0 && columns != 0) {
                 rows = Integer.parseInt(customRows.getText());
                 columns = Integer.parseInt(customColumns.getText());
 
