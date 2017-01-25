@@ -28,22 +28,20 @@ public class ModelGameBoard implements Game {
     private String difficulty;
     private Player player;
 
-    public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j) {
+    public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j, int mines, String difficulty) {
         this.viewSweeper = viewSweeper;
         this.rows = i; //placeholder
         this.columns = j; //placeholder
+        this.nrOfMines = mines;
+        this.difficulty = difficulty;
         this.cells = new int[rows][columns];
         this.mines = new int[rows][columns];
         addTimer();
-        player = createPlayer();
-        setGameDifficulty();
-        placeMines(getNrOfMines());
-        setFlags(getNrOfMines());
-        setCellValues();
+        createPlayer();
     }
 
     public Player createPlayer() {
-        Player player = new Player();
+        player = new Player();
         player.setPlayerName();
 
         return player;
@@ -73,48 +71,6 @@ public class ModelGameBoard implements Game {
     }
 
     /**
-     * Method used to set the number of mines to be placed.
-     * Harder difficulty adds more mines to the field.
-     */
-    public String setGameDifficulty() {
-        Object[] possibilities = {
-                GameDifficulty.VERY_EASY.getMessage(),
-                GameDifficulty.EASY.getMessage(),
-                GameDifficulty.NORMAL.getMessage(),
-                GameDifficulty.HARD.getMessage(),
-                GameDifficulty.VERY_HARD.getMessage()};
-        difficulty = (String) JOptionPane.showInputDialog(null, "Choose difficulty", null,
-                JOptionPane.PLAIN_MESSAGE, null, possibilities, GameDifficulty.EASY.getMessage());
-
-        switch (difficulty) {
-            case "Very Easy":
-                setNrOfMines(GameDifficulty.VERY_EASY.getMines());
-                System.out.println("set game to very easy");
-                break;
-            case "Easy":
-                setNrOfMines(GameDifficulty.EASY.getMines());
-                System.out.println("set game to easy");
-                break;
-            case "Normal":
-                setNrOfMines(GameDifficulty.NORMAL.getMines());
-                System.out.println("set game to normal");
-                break;
-            case "Hard":
-                setNrOfMines(GameDifficulty.HARD.getMines());
-                System.out.println("set game to hard");
-                break;
-            case "Very Hard":
-                setNrOfMines(GameDifficulty.VERY_HARD.getMines());
-                System.out.println("set game to very hard");
-                break;
-            default:
-                break;
-        }
-        viewSweeper.setDifficultyLabel("Current difficulty: " + difficulty);
-        return difficulty;
-    }
-
-    /**
      * Method to place mines. It places a number of mines determined by game difficulty
      *
      * @param nrOfMines number of mines set by setGameDifficulty()
@@ -138,7 +94,7 @@ public class ModelGameBoard implements Game {
 
     public void cellClicked(int i, int j) {
         System.out.println(cells[i][j]);
-        if (cells[i][j] != 0)
+        if (cells[i][j] != CellValue.EMPTY.getValue())
             message = "Clicked cell, it was a " + cells[i][j];
         else
             message = "Clicked cell, it was empty";

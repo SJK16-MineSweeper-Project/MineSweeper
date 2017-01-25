@@ -16,13 +16,22 @@ public class ControllerMineSweeper {
     private ModelMineSweeper modelSweeper;
     private ViewMineSweeper viewSweeper;
 
+    private int rows;
+    private int columns;
+    private int mines;
+    private String difficulty;
+
     private CellListener cellListener;
     private ExitListener exitListener;
     private RightClickListener mouseListener;
 
     public ControllerMineSweeper() {
-        this.viewSweeper = new ViewMineSweeper(8, 8);
-        this.modelBoard = new ModelGameBoard(viewSweeper, 8, 8); //i for rows, j for columns
+        setGameDifficulty();
+        this.viewSweeper = new ViewMineSweeper(rows, columns);
+        viewSweeper.setDifficultyLabel("Current difficulty: " + difficulty);
+
+
+        this.modelBoard = new ModelGameBoard(viewSweeper, rows, columns, mines, difficulty); //i for rows, j for columns
         this.modelSweeper = new ModelMineSweeper();
 
         this.cellListener = new CellListener(viewSweeper, modelBoard);
@@ -45,6 +54,93 @@ public class ControllerMineSweeper {
                 viewSweeper.getCells()[i][j].addMouseListener(mouseListener);
             }
         }
+
+        //setGameDifficulty();
+        modelBoard.placeMines(modelBoard.getNrOfMines());
+        modelBoard.setFlags(modelBoard.getNrOfMines());
+        modelBoard.setCellValues();
+    }
+
+    public void setCustomDifficulty() {
+        JTextField customRows = new JTextField();
+        JTextField customColumns = new JTextField();
+        rows = 0;
+        columns = 0;
+        mines = 0;
+        Object[] message = {
+                "Rows", customRows,
+                "Columns", customColumns,
+        };
+        do {
+
+            int option = JOptionPane.showConfirmDialog(null, message, "Enter custom settings",
+                    JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                rows = Integer.parseInt(customRows.getText());
+                columns = Integer.parseInt(customColumns.getText());
+
+            }
+        }
+        while (rows < 2 && columns < 2);
+        mines = rows + columns;
+
+        System.out.println("rows set to " + rows + " and columns set to " + columns + " with " + mines + " mines");
+    }
+
+    /**
+     * Method used to set the number of mines to be placed.
+     * Harder difficulty adds more mines to the field.
+     */
+    public String setGameDifficulty() {
+        Object[] possibilities = {
+                GameDifficulty.VERY_EASY.getMessage(),
+                GameDifficulty.EASY.getMessage(),
+                GameDifficulty.NORMAL.getMessage(),
+                GameDifficulty.HARD.getMessage(),
+                GameDifficulty.VERY_HARD.getMessage(),
+                GameDifficulty.CUSTOM.getMessage()};
+        difficulty = (String) JOptionPane.showInputDialog(null, "Choose difficulty", null,
+                JOptionPane.PLAIN_MESSAGE, null, possibilities, GameDifficulty.EASY.getMessage());
+
+        switch (difficulty) {
+            case "Very Easy":
+                mines = GameDifficulty.VERY_EASY.getMines();
+                rows = GameDifficulty.VERY_EASY.getRows();
+                columns = GameDifficulty.VERY_EASY.getColumns();
+                System.out.println("set game to very easy");
+                break;
+            case "Easy":
+                mines = GameDifficulty.EASY.getMines();
+                rows = GameDifficulty.EASY.getRows();
+                columns = GameDifficulty.EASY.getColumns();
+                System.out.println("set game to easy");
+                break;
+            case "Normal":
+                mines = GameDifficulty.NORMAL.getMines();
+                rows = GameDifficulty.NORMAL.getRows();
+                columns = GameDifficulty.NORMAL.getColumns();
+                System.out.println("set game to normal");
+                break;
+            case "Hard":
+                mines = GameDifficulty.HARD.getMines();
+                rows = GameDifficulty.HARD.getRows();
+                columns = GameDifficulty.HARD.getColumns();
+                System.out.println("set game to hard");
+                break;
+            case "Very Hard":
+                mines = GameDifficulty.VERY_HARD.getMines();
+                rows = GameDifficulty.VERY_HARD.getRows();
+                columns = GameDifficulty.VERY_HARD.getColumns();
+                System.out.println("set game to very hard");
+                break;
+            case "Custom":
+                setCustomDifficulty();
+                System.out.println("Set game to Custom");
+                break;
+            default:
+                break;
+        }
+        return difficulty;
     }
 
     /**

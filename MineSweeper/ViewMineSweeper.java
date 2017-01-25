@@ -33,13 +33,13 @@ public class ViewMineSweeper extends JFrame {
     public ViewMineSweeper(int rows, int columns) {
         this.cells = new JButton[rows][columns];
         createMenu();
-        createWindow();
+        createWindow(rows, columns);
         createCells();
 
         scoreBoardList = new ArrayList<>();
     }
 
-    private void createWindow() {
+    private void createWindow(int rows, int columns) {
 
         //create main panel
         mainPanel = new JPanel();
@@ -53,7 +53,7 @@ public class ViewMineSweeper extends JFrame {
 
         //create game board
         panel = new JPanel();
-        panel.setLayout(new GridLayout(8, 8));
+        panel.setLayout(new GridLayout(rows, columns));
         panel.setOpaque(true);
         panel.setBackground(Color.DARK_GRAY);
 
@@ -149,7 +149,7 @@ public class ViewMineSweeper extends JFrame {
 
     private void createCells() {
 
-        setCells(new JButton[8][8]);
+        setCells(cells);
         for (int i = 0; i < getCells().length; i++) {
             for (int j = 0; j < getCells()[i].length; j++) {
                 getCells()[i][j] = new JButton();
