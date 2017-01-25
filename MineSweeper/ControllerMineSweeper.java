@@ -10,7 +10,6 @@ import java.awt.event.MouseListener;
 public class ControllerMineSweeper {
 
     private ModelGameBoard modelBoard;
-    private ModelMineSweeper modelSweeper;
     private ViewMineSweeper viewSweeper;
 
     private int rows;
@@ -21,6 +20,7 @@ public class ControllerMineSweeper {
     private CellListener cellListener;
     private ExitListener exitListener;
     private RightClickListener mouseListener;
+    private RestartListener restartListener;
 
     public ControllerMineSweeper() {
         setGameDifficulty();
@@ -29,13 +29,14 @@ public class ControllerMineSweeper {
 
 
         this.modelBoard = new ModelGameBoard(viewSweeper, rows, columns, mines); //i for rows, j for columns
-        this.modelSweeper = new ModelMineSweeper();
 
         this.cellListener = new CellListener(viewSweeper, modelBoard);
         this.mouseListener = new RightClickListener(viewSweeper, modelBoard);
         this.exitListener = new ExitListener();
+        this.restartListener = new RestartListener(viewSweeper);
 
         viewSweeper.getExitOption().addActionListener(exitListener);
+        viewSweeper.getNewGameOption().addActionListener(restartListener);
         viewSweeper.setGameStatus(modelBoard.getStatus(0, 0));
 
         // Add listener to all cells
@@ -52,12 +53,16 @@ public class ControllerMineSweeper {
             }
         }
 
-        //setGameDifficulty();
         modelBoard.placeMines(modelBoard.getNrOfMines());
+        viewSweeper.setBombs(modelBoard.getNrOfMines());
         modelBoard.setFlags(modelBoard.getNrOfMines());
         modelBoard.setCellValues();
     }
 
+    /**
+     * Used when custom difficulty is chosen.
+     * Prompts the user for rows and columns and sends it to model constructor
+     */
     public void setCustomDifficulty() {
         JTextField customRows = new JTextField();
         JTextField customColumns = new JTextField();
@@ -160,6 +165,31 @@ public class ControllerMineSweeper {
     }
 
     /**
+     * Listener that creates a new controller and disposes of the old one when new game is selected
+     *
+     * @author Maxie
+     */
+    private static class RestartListener implements ActionListener {
+        private ViewMineSweeper viewSweeper;
+
+        public RestartListener(ViewMineSweeper viewSweeper) {
+            this.viewSweeper = viewSweeper;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int confirmRestart = JOptionPane.showConfirmDialog(null,
+                    "Are you sure you want to restart?", null, JOptionPane.YES_NO_OPTION,
+                    JOptionPane.PLAIN_MESSAGE);
+            if (confirmRestart == JOptionPane.YES_OPTION) {
+                new ControllerMineSweeper();
+                viewSweeper.closeWindow();
+                System.gc(); //garbage collection, free up memory
+            }
+        }
+    }
+
+    /**
      * Class that adds an actionListener to dice
      *
      * @author Bartek
@@ -189,12 +219,10 @@ public class ControllerMineSweeper {
         }
     }
 
+    /**
+     * Action performed after button is right-clicked
+     */
     private class RightClickListener implements MouseListener {
-
-        /**
-         * Action performed after button is right-clicked
-         */
-
         private ViewMineSweeper viewSweeper;
         private ModelGameBoard modelBoard;
 

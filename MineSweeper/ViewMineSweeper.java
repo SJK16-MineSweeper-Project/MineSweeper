@@ -35,6 +35,12 @@ public class ViewMineSweeper extends JFrame {
         createCells();
     }
 
+    /**
+     * Creates the window based on number of rows and columns
+     *
+     * @param rows    number of rows to be drawn
+     * @param columns number of coulmns to be drawn
+     */
     private void createWindow(int rows, int columns) {
 
         //create main panel
@@ -120,6 +126,9 @@ public class ViewMineSweeper extends JFrame {
 
     }
 
+    /**
+     * Creates a system menu containing options to exit or start a new game
+     */
     private void createMenu() {
         menuBar = new JMenuBar();
 
@@ -128,8 +137,8 @@ public class ViewMineSweeper extends JFrame {
         setJMenuBar(menuBar);
 
         newGameOption = new JMenuItem("New game");
-        newGameOption.setToolTipText("Starts a new game");
-        systemMenu.add(newGameOption);
+        getNewGameOption().setToolTipText("Starts a new game");
+        systemMenu.add(getNewGameOption());
 
         exitOption = new JMenuItem("Exit");
         exitOption.setToolTipText("Exit application");
@@ -159,6 +168,12 @@ public class ViewMineSweeper extends JFrame {
         gameStatus.setText(message);
     }
 
+    /**
+     * JLabel showing the number of bombs set to the field
+     *
+     * @param bombs the number specified in difficulty settings
+     * @see ControllerMineSweeper
+     */
     public void setBombs(int bombs) {
         String message = Integer.toString(bombs);
         bombsOnBoard.setText("Bombs on field: " + message);
@@ -181,6 +196,11 @@ public class ViewMineSweeper extends JFrame {
         return cells;
     }
 
+    /**
+     * getter for exit option in system menu.
+     * Used to assign actionListener to it.
+     * @return JMenuItem exitOption
+     */
     public JMenuItem getExitOption() {
         return this.exitOption;
     }
@@ -189,7 +209,24 @@ public class ViewMineSweeper extends JFrame {
         this.cells = cells;
     }
 
+    /**
+     * getter for system message JLabel. Used to update it with info from the game
+     * @return JLabel message
+     */
     public JLabel getMessages() {
         return messages;
+    }
+
+    public JMenuItem getNewGameOption() {
+        return newGameOption;
+    }
+
+    /**
+     * Disposes of frame, used in restarting the game
+     *
+     * @see ControllerMineSweeper
+     */
+    public void closeWindow() {
+        this.frame.dispose();
     }
 }

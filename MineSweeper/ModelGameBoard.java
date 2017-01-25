@@ -32,8 +32,8 @@ public class ModelGameBoard implements Game {
 
     public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j, int mines) {
         this.viewSweeper = viewSweeper;
-        this.rows = i; //placeholder
-        this.columns = j; //placeholder
+        this.rows = i;
+        this.columns = j;
         this.nrOfMines = mines;
         this.cells = new int[rows][columns];
         this.mines = new int[rows][columns];
@@ -59,7 +59,6 @@ public class ModelGameBoard implements Game {
         }
         System.out.println("placed " + nrOfMines + " mines");
         System.out.println("placedMines is now " + placedMines);
-        viewSweeper.setBombs(placedMines);
     }
 
     public void cellClicked(int i, int j) {
@@ -220,7 +219,7 @@ public class ModelGameBoard implements Game {
     @Override
     public boolean move(int i, int j) {
         boolean move = false;
-        if (cells[i][j] != CellValue.MAYBEMINE.getValue()) {
+        if (cells[i][j] != CellValue.MAYBE_MINE.getValue()) {
             if (openedCells == 0) {
                 startTimer();
                 tStart = System.nanoTime();
@@ -298,7 +297,7 @@ public class ModelGameBoard implements Game {
     }
 
     public void toggleMarkMine(int i, int j) {
-        if (cells[i][j] == CellValue.MAYBEMINE.getValue()) {
+        if (cells[i][j] == CellValue.MAYBE_MINE.getValue()) {
             cells[i][j] = mines[i][j];
             mines[i][j] = 0;
             viewSweeper.getCells()[i][j].setText("");
@@ -308,9 +307,9 @@ public class ModelGameBoard implements Game {
         } else {
             if (flags > 0) {
                 mines[i][j] = cells[i][j];
-                cells[i][j] = CellValue.MAYBEMINE.getValue();
+                cells[i][j] = CellValue.MAYBE_MINE.getValue();
                 viewSweeper.getCells()[i][j].setText("F");
-                viewSweeper.getCells()[i][j].setForeground(new Color(255,0,0));
+                viewSweeper.getCells()[i][j].setForeground(new Color(255, 0, 0));
                 message = "Set flag";
                 addFlag();
             }
@@ -319,11 +318,7 @@ public class ModelGameBoard implements Game {
     }
 
     public void addTimer() {
-        ActionListener timerPerformer = new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                viewSweeper.setTimerLabel(timePlayed());
-            }
-        };
+        ActionListener timerPerformer = evt -> viewSweeper.setTimerLabel(timePlayed());
 
         int delay = 1000;
 
@@ -353,16 +348,6 @@ public class ModelGameBoard implements Game {
      */
     public int getNrOfMines() {
         return nrOfMines;
-    }
-
-    /**
-     * Setter for placed mines on board
-     *
-     * @param nrOfMines sets number of mines to be placed
-     * @see ControllerMineSweeper
-     */
-    public void setNrOfMines(int nrOfMines) {
-        this.nrOfMines = nrOfMines;
     }
 
     @Override
