@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.*;
 
 /**
  * Created by Maxie on 2017-01-17.
@@ -12,6 +13,7 @@ public class ViewMineSweeper extends JFrame {
     private JPanel panel;
     private JPanel topPanel;
     private JPanel messageBoard;
+    private JPanel scoreBoard;
 
     private JLabel timerLabel; //placeholder, currently shows difficulty
     private JLabel difficultyLabel;
@@ -19,6 +21,8 @@ public class ViewMineSweeper extends JFrame {
     private JLabel gameStatus;
     private JLabel bombsOnBoard;
     private JLabel messages;
+    private JLabel scoreBoardLabel;
+    private ArrayList<JLabel> scoreBoardList;
 
     private JMenuBar menuBar;
     private JMenuItem exitOption;
@@ -26,10 +30,13 @@ public class ViewMineSweeper extends JFrame {
 
     private JButton[][] cells;
 
-    public ViewMineSweeper() {
+    public ViewMineSweeper(int rows, int columns) {
+        this.cells = new JButton[rows][columns];
         createMenu();
         createWindow();
         createCells();
+
+        scoreBoardList = new ArrayList<>();
     }
 
     private void createWindow() {
@@ -56,10 +63,17 @@ public class ViewMineSweeper extends JFrame {
         messageBoard.setOpaque(true);
         messageBoard.setBackground(Color.DARK_GRAY);
 
+        scoreBoard = new JPanel();
+        //scoreBoard.setLayout(new BorderLayout());
+        scoreBoard.setLayout(new BoxLayout(scoreBoard, BoxLayout.PAGE_AXIS));
+        scoreBoard.setOpaque(true);
+        scoreBoard.setBackground(Color.DARK_GRAY);
+
         //add panels to main panel
         mainPanel.add(topPanel, BorderLayout.PAGE_START);
         mainPanel.add(panel, BorderLayout.CENTER);
         mainPanel.add(messageBoard, BorderLayout.PAGE_END);
+        messageBoard.add(scoreBoard, BorderLayout.PAGE_END);
 
         //window settings
         JFrame frame = new JFrame("Minesweeper");
@@ -76,24 +90,6 @@ public class ViewMineSweeper extends JFrame {
                 System.exit(0);
             }
         });
-
-        //create bomb label
-        bombsOnBoard = new JLabel();
-        bombsOnBoard.setForeground(Color.WHITE);
-        bombsOnBoard.setHorizontalAlignment(JLabel.LEFT);
-        messageBoard.add(bombsOnBoard, BorderLayout.WEST);
-
-        //create messages
-        messages = new JLabel();
-        messages.setForeground(Color.WHITE);
-        messages.setHorizontalAlignment(JLabel.CENTER);
-        messageBoard.add(messages, BorderLayout.CENTER);
-
-        //create gameStatus
-        gameStatus = new JLabel();
-        gameStatus.setForeground(Color.WHITE);
-        gameStatus.setHorizontalAlignment(JLabel.RIGHT);
-        messageBoard.add(gameStatus, BorderLayout.EAST);
 
         //create flags
         flagsLabel = new JLabel();
@@ -114,6 +110,24 @@ public class ViewMineSweeper extends JFrame {
         difficultyLabel.setForeground(Color.WHITE);
         difficultyLabel.setHorizontalAlignment(JLabel.RIGHT);
         topPanel.add(difficultyLabel, BorderLayout.EAST);
+
+        //create bomb label
+        bombsOnBoard = new JLabel();
+        bombsOnBoard.setForeground(Color.WHITE);
+        bombsOnBoard.setHorizontalAlignment(JLabel.LEFT);
+        messageBoard.add(bombsOnBoard, BorderLayout.WEST);
+
+        //create messages
+        messages = new JLabel();
+        messages.setForeground(Color.WHITE);
+        messages.setHorizontalAlignment(JLabel.CENTER);
+        messageBoard.add(messages, BorderLayout.CENTER);
+
+        //create gameStatus
+        gameStatus = new JLabel();
+        gameStatus.setForeground(Color.WHITE);
+        gameStatus.setHorizontalAlignment(JLabel.RIGHT);
+        messageBoard.add(gameStatus, BorderLayout.EAST);
 
     }
 
@@ -149,6 +163,19 @@ public class ViewMineSweeper extends JFrame {
             }
         }
 
+    }
+
+    public void createScoreBoardLabel() {
+        scoreBoardLabel = new JLabel();
+        scoreBoardLabel.setForeground(Color.WHITE);
+        scoreBoardLabel.setHorizontalAlignment(JLabel.LEFT);
+        scoreBoard.add(scoreBoardLabel, BorderLayout.WEST);
+        scoreBoardList.add(scoreBoardLabel);
+    }
+
+    public void setScoreBoardLabel(int item, String name, String level, String time) {
+        JLabel scoreListItem = scoreBoardList.get(item);
+        scoreListItem.setText(name + ", " + "level " + level + ", " + time + " seconds");
     }
 
     public void setGameStatus(String message) {

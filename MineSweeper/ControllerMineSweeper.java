@@ -3,6 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Maxie on 2017-01-17.
@@ -18,7 +21,7 @@ public class ControllerMineSweeper {
     private RightClickListener mouseListener;
 
     public ControllerMineSweeper() {
-        this.viewSweeper = new ViewMineSweeper();
+        this.viewSweeper = new ViewMineSweeper(8, 8);
         this.modelBoard = new ModelGameBoard(viewSweeper, 8, 8); //i for rows, j for columns
         this.modelSweeper = new ModelMineSweeper();
 
@@ -42,54 +45,7 @@ public class ControllerMineSweeper {
                 viewSweeper.getCells()[i][j].addMouseListener(mouseListener);
             }
         }
-
-        setGameDifficulty();
-        modelBoard.placeMines(modelBoard.getNrOfMines());
-        modelBoard.setFlags(modelBoard.getNrOfMines());
-        modelBoard.setCellValues();
     }
-
-    /**
-     * Method used to set the number of mines to be placed.
-     * Harder difficulty adds more mines to the field.
-     */
-    public void setGameDifficulty() {
-        Object[] possibilities = {
-                GameDifficulty.VERY_EASY.getMessage(),
-                GameDifficulty.EASY.getMessage(),
-                GameDifficulty.NORMAL.getMessage(),
-                GameDifficulty.HARD.getMessage(),
-                GameDifficulty.VERY_HARD.getMessage()};
-        String difficulty = (String) JOptionPane.showInputDialog(null, "Choose difficulty", null,
-                JOptionPane.PLAIN_MESSAGE, null, possibilities, GameDifficulty.EASY.getMessage());
-
-        switch (difficulty) {
-            case "Very Easy":
-                modelBoard.setNrOfMines(GameDifficulty.VERY_EASY.getMines());
-                System.out.println("set game to very easy");
-                break;
-            case "Easy":
-                modelBoard.setNrOfMines(GameDifficulty.EASY.getMines());
-                System.out.println("set game to easy");
-                break;
-            case "Normal":
-                modelBoard.setNrOfMines(GameDifficulty.NORMAL.getMines());
-                System.out.println("set game to normal");
-                break;
-            case "Hard":
-                modelBoard.setNrOfMines(GameDifficulty.HARD.getMines());
-                System.out.println("set game to hard");
-                break;
-            case "Very Hard":
-                modelBoard.setNrOfMines(GameDifficulty.VERY_HARD.getMines());
-                System.out.println("set game to very hard");
-                break;
-            default:
-                break;
-        }
-        viewSweeper.setDifficultyLabel("Current difficulty: " + difficulty);
-    }
-
 
     /**
      * Class that adds an actionListener used to exit the application

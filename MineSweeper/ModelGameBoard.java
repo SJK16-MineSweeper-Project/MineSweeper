@@ -1,11 +1,8 @@
-// Show values of all cells if game over
-// Singelton
-// Make room for timer, flags
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -28,6 +25,8 @@ public class ModelGameBoard implements Game {
     private long tRes;
     private int flags;
     private String message;
+    private String difficulty;
+    private Player player;
 
     public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j) {
         this.viewSweeper = viewSweeper;
@@ -36,6 +35,83 @@ public class ModelGameBoard implements Game {
         this.cells = new int[rows][columns];
         this.mines = new int[rows][columns];
         addTimer();
+        player = createPlayer();
+        setGameDifficulty();
+        placeMines(getNrOfMines());
+        setFlags(getNrOfMines());
+        setCellValues();
+    }
+
+    public Player createPlayer() {
+        Player player = new Player();
+        player.setPlayerName();
+
+        return player;
+    }
+
+    public void setPlayerScore(Player player) {
+        player.setLevel(difficulty);
+        player.setTime(getTimePlayed());
+    }
+
+    public void addPlayerScore(Player player) {
+
+        Singleton newInstance = Singleton.getInstance();
+        System.out.println("Instance ID: " + System.identityHashCode(newInstance));
+
+        String[] playerInfo = {player.getName(), player.getLevel(), String.valueOf(player.getTime())};
+
+        newInstance.setScoreList(playerInfo);
+
+        ArrayList scoreList = newInstance.getScoreList();
+
+        for(int i = 0; i < scoreList.size(); i++) {
+            String[] playerScore = (String[]) scoreList.get(i);
+            viewSweeper.createScoreBoardLabel();
+            viewSweeper.setScoreBoardLabel(i, playerScore[0], playerScore[1], playerScore[2]);
+        }
+    }
+
+    /**
+     * Method used to set the number of mines to be placed.
+     * Harder difficulty adds more mines to the field.
+     */
+    public String setGameDifficulty() {
+        Object[] possibilities = {
+                GameDifficulty.VERY_EASY.getMessage(),
+                GameDifficulty.EASY.getMessage(),
+                GameDifficulty.NORMAL.getMessage(),
+                GameDifficulty.HARD.getMessage(),
+                GameDifficulty.VERY_HARD.getMessage()};
+        difficulty = (String) JOptionPane.showInputDialog(null, "Choose difficulty", null,
+                JOptionPane.PLAIN_MESSAGE, null, possibilities, GameDifficulty.EASY.getMessage());
+
+        switch (difficulty) {
+            case "Very Easy":
+                setNrOfMines(GameDifficulty.VERY_EASY.getMines());
+                System.out.println("set game to very easy");
+                break;
+            case "Easy":
+                setNrOfMines(GameDifficulty.EASY.getMines());
+                System.out.println("set game to easy");
+                break;
+            case "Normal":
+                setNrOfMines(GameDifficulty.NORMAL.getMines());
+                System.out.println("set game to normal");
+                break;
+            case "Hard":
+                setNrOfMines(GameDifficulty.HARD.getMines());
+                System.out.println("set game to hard");
+                break;
+            case "Very Hard":
+                setNrOfMines(GameDifficulty.VERY_HARD.getMines());
+                System.out.println("set game to very hard");
+                break;
+            default:
+                break;
+        }
+        viewSweeper.setDifficultyLabel("Current difficulty: " + difficulty);
+        return difficulty;
     }
 
     /**
@@ -229,9 +305,7 @@ public class ModelGameBoard implements Game {
 
                 for (int e = 0; e < viewSweeper.getCells().length; ++e) {
                     for (int c = 0; c < viewSweeper.getCells()[e].length; ++c) {
-                        if (cells[e][c] != CellValue.OPEN.getValue()) {
-                            convertCellValuesToString(e, c);
-                        }
+                        convertCellValuesToString(e, c);
                         toggleCellVisibility(e, c, false);
                     }
                 }
@@ -257,8 +331,13 @@ public class ModelGameBoard implements Game {
     }
 
     public void convertCellValuesToString(int i, int j) {
-        if (cells[i][j] == CellValue.MINE.getValue()) {
+        if(cells[i][j] == CellValue.MINE.getValue()) {
             viewSweeper.getCells()[i][j].setText(String.valueOf("Mine"));
+        } else if(cells[i][j] == CellValue.OPEN.getValue() || cells[i][j] == CellValue.EMPTY.getValue()) {
+            viewSweeper.getCells()[i][j].setText(String.valueOf(""));
+        } else if(cells[i][j] == CellValue.MAYBEMINE.getValue()) {
+                toggleMarkMine(i, j);
+                viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
         } else {
             viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
         }
@@ -281,11 +360,20 @@ public class ModelGameBoard implements Game {
 
     public boolean gameStatus() {
         System.out.println("Cells opened" + openedCells);
-        if (openedCells == rows * columns - nrOfMines || isGoing == false) {
+        if (openedCells == rows * columns - nrOfMines && isGoing == false) {
             System.out.println("All cells opened. Game end.");
-            viewSweeper.setGameStatus("Game over");
-            message = "Game Over!";
+            viewSweeper.setGameStatus("Game ended succefully");
+            message = "Game ended succefully";
             stopTimer();
+            setPlayerScore(player);
+            addPlayerScore(player);
+            return false;
+        } if(isGoing == false) {
+            viewSweeper.setGameStatus("Game over");
+            message = "You clicked on a mine!";
+            stopTimer();
+            setPlayerScore(player);
+            addPlayerScore(player);
             return false;
         } else {
             System.out.println("Still cells to open.");
@@ -329,6 +417,10 @@ public class ModelGameBoard implements Game {
     public long timePlayed() {
         long tCurrent = System.nanoTime();
         tRes = (tCurrent - tStart) / 1000000000L;
+        return tRes;
+    }
+
+    public long getTimePlayed() {
         return tRes;
     }
 
