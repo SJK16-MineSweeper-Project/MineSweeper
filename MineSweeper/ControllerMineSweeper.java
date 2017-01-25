@@ -23,14 +23,10 @@ public class ControllerMineSweeper {
 
     private CellListener cellListener;
     private ExitListener exitListener;
-    private NewGameListener newGameListener;
     private RightClickListener mouseListener;
 
     public ControllerMineSweeper() {
-        newGame();
-    }
 
-    public void newGame() {
         setGameDifficulty();
         this.viewSweeper = new ViewMineSweeper(rows, columns);
         viewSweeper.setDifficultyLabel("Current difficulty: " + difficulty);
@@ -42,10 +38,8 @@ public class ControllerMineSweeper {
         this.cellListener = new CellListener(viewSweeper, modelBoard);
         this.mouseListener = new RightClickListener(viewSweeper, modelBoard);
         this.exitListener = new ExitListener();
-        this.newGameListener = new NewGameListener();
 
         viewSweeper.getExitOption().addActionListener(exitListener);
-        viewSweeper.getNewGameOption().addActionListener(newGameListener);
         viewSweeper.setGameStatus(modelBoard.getStatus(0, 0));
 
         // Add listener to all cells
@@ -165,19 +159,6 @@ public class ControllerMineSweeper {
                     JOptionPane.PLAIN_MESSAGE);
             if (confirmExit == JOptionPane.YES_OPTION) {
                 System.exit(0);
-            }
-        }
-    }
-
-    private static class NewGameListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int confirmExit = JOptionPane.showConfirmDialog(null,
-                    "Are you sure you want to start a new game?", null, JOptionPane.YES_NO_OPTION,
-                    JOptionPane.PLAIN_MESSAGE);
-            if (confirmExit == JOptionPane.YES_OPTION) {
-                System.out.println("Restarting game...");
             }
         }
     }
