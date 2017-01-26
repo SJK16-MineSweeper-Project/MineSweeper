@@ -30,8 +30,7 @@ public class ControllerMineSweeper {
         setGameDifficulty();
         this.viewSweeper = new ViewMineSweeper(rows, columns);
         viewSweeper.setDifficultyLabel("Current difficulty: " + difficulty);
-
-
+        
         this.modelBoard = new ModelGameBoard(viewSweeper, rows, columns, mines, difficulty); //i for rows, j for columns
         this.modelSweeper = new ModelMineSweeper();
 
