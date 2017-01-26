@@ -3,6 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Maxie on 2017-01-17.
@@ -10,6 +13,7 @@ import java.awt.event.MouseListener;
 public class ControllerMineSweeper {
 
     private ModelGameBoard modelBoard;
+    private ModelMineSweeper modelSweeper;
     private ViewMineSweeper viewSweeper;
 
     private int rows;
@@ -20,23 +24,22 @@ public class ControllerMineSweeper {
     private CellListener cellListener;
     private ExitListener exitListener;
     private RightClickListener mouseListener;
-    private RestartListener restartListener;
 
     public ControllerMineSweeper() {
+
         setGameDifficulty();
         this.viewSweeper = new ViewMineSweeper(rows, columns);
         viewSweeper.setDifficultyLabel("Current difficulty: " + difficulty);
 
 
-        this.modelBoard = new ModelGameBoard(viewSweeper, rows, columns, mines); //i for rows, j for columns
+        this.modelBoard = new ModelGameBoard(viewSweeper, rows, columns, mines, difficulty); //i for rows, j for columns
+        this.modelSweeper = new ModelMineSweeper();
 
         this.cellListener = new CellListener(viewSweeper, modelBoard);
         this.mouseListener = new RightClickListener(viewSweeper, modelBoard);
         this.exitListener = new ExitListener();
-        this.restartListener = new RestartListener(viewSweeper);
 
         viewSweeper.getExitOption().addActionListener(exitListener);
-        viewSweeper.getNewGameOption().addActionListener(restartListener);
         viewSweeper.setGameStatus(modelBoard.getStatus(0, 0));
 
         // Add listener to all cells
@@ -53,16 +56,13 @@ public class ControllerMineSweeper {
             }
         }
 
+        //setGameDifficulty();
         modelBoard.placeMines(modelBoard.getNrOfMines());
-        viewSweeper.setBombs(modelBoard.getNrOfMines());
         modelBoard.setFlags(modelBoard.getNrOfMines());
         modelBoard.setCellValues();
+
     }
 
-    /**
-     * Used when custom difficulty is chosen.
-     * Prompts the user for rows and columns and sends it to model constructor
-     */
     public void setCustomDifficulty() {
         JTextField customRows = new JTextField();
         JTextField customColumns = new JTextField();
@@ -145,7 +145,6 @@ public class ControllerMineSweeper {
         return difficulty;
     }
 
-
     /**
      * Class that adds an actionListener used to exit the application
      *
@@ -160,31 +159,6 @@ public class ControllerMineSweeper {
                     JOptionPane.PLAIN_MESSAGE);
             if (confirmExit == JOptionPane.YES_OPTION) {
                 System.exit(0);
-            }
-        }
-    }
-
-    /**
-     * Listener that creates a new controller and disposes of the old one when new game is selected
-     *
-     * @author Maxie
-     */
-    private static class RestartListener implements ActionListener {
-        private ViewMineSweeper viewSweeper;
-
-        public RestartListener(ViewMineSweeper viewSweeper) {
-            this.viewSweeper = viewSweeper;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int confirmRestart = JOptionPane.showConfirmDialog(null,
-                    "Are you sure you want to restart?", null, JOptionPane.YES_NO_OPTION,
-                    JOptionPane.PLAIN_MESSAGE);
-            if (confirmRestart == JOptionPane.YES_OPTION) {
-                new ControllerMineSweeper();
-                viewSweeper.closeWindow();
-                System.gc(); //garbage collection, free up memory
             }
         }
     }
@@ -219,10 +193,12 @@ public class ControllerMineSweeper {
         }
     }
 
-    /**
-     * Action performed after button is right-clicked
-     */
     private class RightClickListener implements MouseListener {
+
+        /**
+         * Action performed after button is right-clicked
+         */
+
         private ViewMineSweeper viewSweeper;
         private ModelGameBoard modelBoard;
 
