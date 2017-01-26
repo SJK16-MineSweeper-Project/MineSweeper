@@ -17,9 +17,10 @@ public class ControllerPlayer {
         setPlayerName();
     }
 
-    public static void setPlayerScore(String difficulty, long timePlayed) {
+    public static void setPlayerScore(String difficulty, long timePlayed, String completed) {
         player.setLevel(difficulty);
         player.setTime(timePlayed);
+        player.setCompleted(completed);
     }
 
     public void addPlayerScore() {
@@ -27,7 +28,7 @@ public class ControllerPlayer {
         Singleton newInstance = Singleton.getInstance();
         System.out.println("Instance ID: " + System.identityHashCode(newInstance));
 
-        String[] playerInfo = {player.getName(), player.getLevel(), String.valueOf(player.getTime())};
+        String[] playerInfo = {player.getName(), player.getLevel(), String.valueOf(player.getTime()), player.getCompleted()};
         System.out.println(Arrays.toString(playerInfo));
 
         newInstance.setScoreList(playerInfo);
@@ -39,7 +40,7 @@ public class ControllerPlayer {
         for (int i = 0; i < scoreList.size(); i++) {
             String[] playerScore = (String[]) scoreList.get(i);
             viewSweeper.createScoreBoardLabel();
-            viewSweeper.setScoreBoardLabel(i, playerScore[0], playerScore[1], playerScore[2]);
+            viewSweeper.setScoreBoardLabel(i, playerScore[0], playerScore[1], playerScore[2], playerScore[3]);
         }
     }
 

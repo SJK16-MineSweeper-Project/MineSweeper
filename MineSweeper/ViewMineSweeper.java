@@ -180,9 +180,9 @@ public class ViewMineSweeper extends JFrame {
         scoreBoardList.add(scoreBoardLabel);
     }
 
-    public void setScoreBoardLabel(int item, String name, String level, String time) {
+    public void setScoreBoardLabel(int item, String name, String level, String time, String completed) {
         JLabel scoreListItem = scoreBoardList.get(item);
-        scoreListItem.setText(name + ", " + "level " + level + ", " + time + " seconds");
+        scoreListItem.setText(name + ", " + "level " + level + ", " + time + " seconds [" + completed + "]" );
     }
 
     public void setGameStatus(String message) {

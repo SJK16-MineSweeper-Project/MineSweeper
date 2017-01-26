@@ -221,7 +221,7 @@ public class ControllerMineSweeper {
                 }
             }
             if (modelBoard.gameStatus() == false) {
-                player.setPlayerScore(difficulty, modelBoard.getTimePlayed());
+                player.setPlayerScore(difficulty, modelBoard.getTimePlayed(), modelBoard.getCompleted());
                 player.addPlayerScore();
             }
         }
