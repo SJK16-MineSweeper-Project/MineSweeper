@@ -15,7 +15,9 @@ public class ViewMineSweeper extends JFrame {
     private JPanel messageBoard;
     private JPanel scoreBoard;
 
-    private JLabel timerLabel; //placeholder, currently shows difficulty
+    private JFrame frame;
+
+    private JLabel timerLabel;
     private JLabel difficultyLabel;
     private JLabel flagsLabel;
     private JLabel gameStatus;
@@ -39,6 +41,12 @@ public class ViewMineSweeper extends JFrame {
         scoreBoardList = new ArrayList<>();
     }
 
+    /**
+     * Creates the window based on number of rows and columns
+     *
+     * @param rows    number of rows to be drawn
+     * @param columns number of coulmns to be drawn
+     */
     private void createWindow(int rows, int columns) {
 
         //create main panel
@@ -64,7 +72,6 @@ public class ViewMineSweeper extends JFrame {
         messageBoard.setBackground(Color.DARK_GRAY);
 
         scoreBoard = new JPanel();
-        //scoreBoard.setLayout(new BorderLayout());
         scoreBoard.setLayout(new BoxLayout(scoreBoard, BoxLayout.PAGE_AXIS));
         scoreBoard.setOpaque(true);
         scoreBoard.setBackground(Color.DARK_GRAY);
@@ -76,9 +83,9 @@ public class ViewMineSweeper extends JFrame {
         messageBoard.add(scoreBoard, BorderLayout.PAGE_END);
 
         //window settings
-        JFrame frame = new JFrame("Minesweeper");
+        frame = new JFrame("Minesweeper");
         frame.add(mainPanel);
-        frame.setPreferredSize(new Dimension(500, 500));
+        frame.setPreferredSize(new Dimension(1000, 1000));
         frame.setLocationRelativeTo(null); //center window
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
@@ -153,16 +160,29 @@ public class ViewMineSweeper extends JFrame {
         for (int i = 0; i < getCells().length; i++) {
             for (int j = 0; j < getCells()[i].length; j++) {
                 getCells()[i][j] = new JButton();
-                getCells()[i][j].setContentAreaFilled(false);
+                getCells()[i][j].setOpaque(true);
+                getCells()[i][j].setContentAreaFilled(true);
                 getCells()[i][j].setBorderPainted(true);
                 getCells()[i][j].setPreferredSize(new Dimension(40, 40));
                 getCells()[i][j].setFont(new Font("Tahoma", Font.PLAIN, 20));
-                getCells()[i][j].setBackground(new Color(0, 204, 0));
+                getCells()[i][j].setBackground(new Color(117, 114, 115));
                 getCells()[i][j].getModel().setEnabled(true);
                 panel.add(getCells()[i][j]);
             }
         }
+    }
 
+    public void createScoreBoardLabel() {
+        scoreBoardLabel = new JLabel();
+        scoreBoardLabel.setForeground(Color.WHITE);
+        scoreBoardLabel.setHorizontalAlignment(JLabel.LEFT);
+        scoreBoard.add(scoreBoardLabel, BorderLayout.WEST);
+        scoreBoardList.add(scoreBoardLabel);
+    }
+
+    public void setScoreBoardLabel(int item, String name, String level, String time) {
+        JLabel scoreListItem = scoreBoardList.get(item);
+        scoreListItem.setText(name + ", " + "level " + level + ", " + time + " seconds");
     }
 
     public void createScoreBoardLabel() {
@@ -218,5 +238,14 @@ public class ViewMineSweeper extends JFrame {
 
     public JLabel getMessages() {
         return messages;
+    }
+
+    /**
+     * Disposes of frame, used in restarting the game
+     *
+     * @see ControllerMineSweeper
+     */
+    public void closeWindow() {
+        this.frame.dispose();
     }
 }
