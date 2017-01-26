@@ -1,8 +1,6 @@
 import javax.swing.*;
-import java.awt.event.ActionEvent;
+import java.awt.*;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -25,49 +23,15 @@ public class ModelGameBoard implements Game {
     private long tRes;
     private int flags;
     private String message;
-    private String difficulty;
-    private Player player;
 
-    public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j, int mines, String difficulty) {
+    public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j, int mines) {
         this.viewSweeper = viewSweeper;
-        this.rows = i; //placeholder
-        this.columns = j; //placeholder
+        this.rows = i;
+        this.columns = j;
         this.nrOfMines = mines;
-        this.difficulty = difficulty;
         this.cells = new int[rows][columns];
         this.mines = new int[rows][columns];
         addTimer();
-        createPlayer();
-    }
-
-    public Player createPlayer() {
-        player = new Player();
-        player.setPlayerName();
-
-        return player;
-    }
-
-    public void setPlayerScore(Player player) {
-        player.setLevel(difficulty);
-        player.setTime(getTimePlayed());
-    }
-
-    public void addPlayerScore(Player player) {
-
-        Singleton newInstance = Singleton.getInstance();
-        System.out.println("Instance ID: " + System.identityHashCode(newInstance));
-
-        String[] playerInfo = {player.getName(), player.getLevel(), String.valueOf(player.getTime())};
-
-        newInstance.setScoreList(playerInfo);
-
-        ArrayList scoreList = newInstance.getScoreList();
-
-        for(int i = 0; i < scoreList.size(); i++) {
-            String[] playerScore = (String[]) scoreList.get(i);
-            viewSweeper.createScoreBoardLabel();
-            viewSweeper.setScoreBoardLabel(i, playerScore[0], playerScore[1], playerScore[2]);
-        }
     }
 
     /**
@@ -89,7 +53,6 @@ public class ModelGameBoard implements Game {
         }
         System.out.println("placed " + nrOfMines + " mines");
         System.out.println("placedMines is now " + placedMines);
-        viewSweeper.setBombs(placedMines);
     }
 
     public void cellClicked(int i, int j) {
@@ -98,14 +61,18 @@ public class ModelGameBoard implements Game {
             message = "Clicked cell, it was a " + cells[i][j];
         else
             message = "Clicked cell, it was empty";
-
     }
 
+    /**
+     * Calculate mine-adjacent-value for cell.
+     *
+     * @param i number of rows
+     * @param j number of columns
+     */
     public int cellValue(int i, int j) {
-        /**
-         * Calculate mine-adjacent-value for cell.
-         * @param totalCells total value for max 8 surrounding cells.
-         * @param cell value of surrounding cell.
+        /*
+        totalCells - total value for max 8 surrounding cells.
+        cell - value of surrounding cell.
          */
         int totalCells = 0;
         int cell = 0;
@@ -252,7 +219,7 @@ public class ModelGameBoard implements Game {
     @Override
     public boolean move(int i, int j) {
         boolean move = false;
-        if (cells[i][j] != CellValue.MAYBEMINE.getValue()) {
+        if (cells[i][j] != CellValue.MAYBE_MINE.getValue()) {
             if (openedCells == 0) {
                 startTimer();
                 tStart = System.nanoTime();
@@ -289,13 +256,13 @@ public class ModelGameBoard implements Game {
     }
 
     public void convertCellValuesToString(int i, int j) {
-        if(cells[i][j] == CellValue.MINE.getValue()) {
+        if (cells[i][j] == CellValue.MINE.getValue()) {
             viewSweeper.getCells()[i][j].setText(String.valueOf("Mine"));
-        } else if(cells[i][j] == CellValue.OPEN.getValue() || cells[i][j] == CellValue.EMPTY.getValue()) {
+        } else if (cells[i][j] == CellValue.OPEN.getValue() || cells[i][j] == CellValue.EMPTY.getValue()) {
             viewSweeper.getCells()[i][j].setText(String.valueOf(""));
-        } else if(cells[i][j] == CellValue.MAYBEMINE.getValue()) {
-                toggleMarkMine(i, j);
-                viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
+        } else if (cells[i][j] == CellValue.MAYBE_MINE.getValue()) {
+            toggleMarkMine(i, j);
+            viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
         } else {
             viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
         }
@@ -303,6 +270,7 @@ public class ModelGameBoard implements Game {
 
     public void toggleCellVisibility(int i, int j, boolean value) {
         viewSweeper.getCells()[i][j].setEnabled(value);
+        viewSweeper.getCells()[i][j].setBackground(new Color(99, 99, 99));
     }
 
     public void addFlag() {
@@ -320,18 +288,15 @@ public class ModelGameBoard implements Game {
         System.out.println("Cells opened " + openedCells);
         if (openedCells == rows * columns - nrOfMines && isGoing == false) {
             System.out.println("All cells opened. Game end.");
-            viewSweeper.setGameStatus("Game ended succefully");
-            message = "Game ended succefully";
+            viewSweeper.setGameStatus("Game ended successfully");
+            message = "Game ended successfully";
             stopTimer();
-            setPlayerScore(player);
-            addPlayerScore(player);
             return false;
-        } if(isGoing == false) {
+        }
+        if (isGoing == false) {
             viewSweeper.setGameStatus("Game over");
             message = "You clicked on a mine!";
             stopTimer();
-            setPlayerScore(player);
-            addPlayerScore(player);
             return false;
         } else {
             System.out.println("Still cells to open.");
@@ -340,7 +305,7 @@ public class ModelGameBoard implements Game {
     }
 
     public void toggleMarkMine(int i, int j) {
-        if (cells[i][j] == CellValue.MAYBEMINE.getValue()) {
+        if (cells[i][j] == CellValue.MAYBE_MINE.getValue()) {
             cells[i][j] = mines[i][j];
             mines[i][j] = 0;
             viewSweeper.getCells()[i][j].setText("");
@@ -349,8 +314,9 @@ public class ModelGameBoard implements Game {
         } else {
             if (flags > 0) {
                 mines[i][j] = cells[i][j];
-                cells[i][j] = CellValue.MAYBEMINE.getValue();
-                viewSweeper.getCells()[i][j].setText("Mine");
+                cells[i][j] = CellValue.MAYBE_MINE.getValue();
+                viewSweeper.getCells()[i][j].setText("?");
+                viewSweeper.getCells()[i][j].setForeground(new Color(255, 0, 0));
                 message = "Set flag";
                 addFlag();
             }
@@ -359,11 +325,7 @@ public class ModelGameBoard implements Game {
     }
 
     public void addTimer() {
-        ActionListener timerPerformer = new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                viewSweeper.setTimerLabel(timePlayed());
-            }
-        };
+        ActionListener timerPerformer = evt -> viewSweeper.setTimerLabel(timePlayed());
 
         int delay = 1000;
 
@@ -397,16 +359,6 @@ public class ModelGameBoard implements Game {
      */
     public int getNrOfMines() {
         return nrOfMines;
-    }
-
-    /**
-     * Setter for placed mines on board
-     *
-     * @param nrOfMines sets number of mines to be placed
-     * @see ControllerMineSweeper
-     */
-    public void setNrOfMines(int nrOfMines) {
-        this.nrOfMines = nrOfMines;
     }
 
     @Override
