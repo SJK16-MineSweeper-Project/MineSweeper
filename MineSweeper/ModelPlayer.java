@@ -10,6 +10,7 @@ public class ModelPlayer {
     private String name;
     private String level;
     private long time;
+    private String completed;
 
     public ModelPlayer() {
 
@@ -38,4 +39,8 @@ public class ModelPlayer {
     public void setTime(long time) {
         this.time = time;
     }
+
+    public void setCompleted(String completed) { this.completed = completed; }
+
+    public String getCompleted() { return completed; };
 }

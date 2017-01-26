@@ -23,6 +23,7 @@ public class ModelGameBoard implements Game {
     private long tRes;
     private int flags;
     private String message;
+    private String completed;
 
     public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j, int mines) {
         this.viewSweeper = viewSweeper;
@@ -290,12 +291,14 @@ public class ModelGameBoard implements Game {
             System.out.println("All cells opened. Game end.");
             viewSweeper.setGameStatus("Game ended successfully");
             message = "Game ended successfully";
+            completed = "Game completed";
             stopTimer();
             return false;
         }
         if (isGoing == false) {
             viewSweeper.setGameStatus("Game over");
             message = "You clicked on a mine!";
+            completed = "Game not completed";
             stopTimer();
             return false;
         } else {
@@ -383,6 +386,10 @@ public class ModelGameBoard implements Game {
 
     public void setFlags(int flags) {
         this.flags = flags;
+    }
+
+    public String getCompleted() {
+        return completed;
     }
 
 }
