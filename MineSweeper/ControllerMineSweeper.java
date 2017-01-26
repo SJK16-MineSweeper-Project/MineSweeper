@@ -3,6 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Maxie on 2017-01-17.
@@ -54,6 +57,33 @@ public class ControllerMineSweeper {
         viewSweeper.setBombs(modelBoard.getNrOfMines());
         modelBoard.setFlags(modelBoard.getNrOfMines());
         modelBoard.setCellValues();
+
+    }
+
+    public void setCustomDifficulty() {
+        JTextField customRows = new JTextField();
+        JTextField customColumns = new JTextField();
+        rows = 0;
+        columns = 0;
+        mines = 0;
+        Object[] message = {
+                "Rows", customRows,
+                "Columns", customColumns,
+        };
+        do {
+
+            int option = JOptionPane.showConfirmDialog(null, message, "Enter custom settings",
+                    JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                rows = Integer.parseInt(customRows.getText());
+                columns = Integer.parseInt(customColumns.getText());
+
+            }
+        }
+        while (rows < 2 && columns < 2);
+        mines = rows + columns;
+
+        System.out.println("rows set to " + rows + " and columns set to " + columns + " with " + mines + " mines");
     }
 
     /**

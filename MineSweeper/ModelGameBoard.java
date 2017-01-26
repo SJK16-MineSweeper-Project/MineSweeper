@@ -24,6 +24,8 @@ public class ModelGameBoard implements Game {
     private long tRes;
     private int flags;
     private String message;
+    private String difficulty;
+    private Player player;
 
     public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j, int mines) {
         this.viewSweeper = viewSweeper;
@@ -33,6 +35,37 @@ public class ModelGameBoard implements Game {
         this.cells = new int[rows][columns];
         this.mines = new int[rows][columns];
         addTimer();
+        createPlayer();
+    }
+
+    public Player createPlayer() {
+        player = new Player();
+        player.setPlayerName();
+
+        return player;
+    }
+
+    public void setPlayerScore(Player player) {
+        player.setLevel(difficulty);
+        player.setTime(getTimePlayed());
+    }
+
+    public void addPlayerScore(Player player) {
+
+        Singleton newInstance = Singleton.getInstance();
+        System.out.println("Instance ID: " + System.identityHashCode(newInstance));
+
+        String[] playerInfo = {player.getName(), player.getLevel(), String.valueOf(player.getTime())};
+
+        newInstance.setScoreList(playerInfo);
+
+        ArrayList scoreList = newInstance.getScoreList();
+
+        for(int i = 0; i < scoreList.size(); i++) {
+            String[] playerScore = (String[]) scoreList.get(i);
+            viewSweeper.createScoreBoardLabel();
+            viewSweeper.setScoreBoardLabel(i, playerScore[0], playerScore[1], playerScore[2]);
+        }
     }
 
     /**
@@ -257,7 +290,7 @@ public class ModelGameBoard implements Game {
     }
 
     public void convertCellValuesToString(int i, int j) {
-        if (cells[i][j] == CellValue.MINE.getValue()) {
+        if(cells[i][j] == CellValue.MINE.getValue()) {
             viewSweeper.getCells()[i][j].setText(String.valueOf("Mine"));
         } else if (cells[i][j] == CellValue.OPEN.getValue() || cells[i][j] == CellValue.EMPTY.getValue()) {
             viewSweeper.getCells()[i][j].setText(String.valueOf(""));
@@ -298,6 +331,8 @@ public class ModelGameBoard implements Game {
             viewSweeper.setGameStatus("Game over");
             message = "You clicked on a mine!";
             stopTimer();
+            setPlayerScore(player);
+            addPlayerScore(player);
             return false;
         } else {
             System.out.println("Still cells to open.");
