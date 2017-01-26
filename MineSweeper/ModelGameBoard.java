@@ -1,11 +1,6 @@
-// Show values of all cells if game over
-// Singelton
-// Make room for timer, flags
-
 import javax.swing.*;
-import java.awt.event.ActionEvent;
+import java.awt.*;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
 import java.util.Random;
 
 /**
@@ -29,10 +24,11 @@ public class ModelGameBoard implements Game {
     private int flags;
     private String message;
 
-    public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j) {
+    public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j, int mines) {
         this.viewSweeper = viewSweeper;
-        this.rows = i; //placeholder
-        this.columns = j; //placeholder
+        this.rows = i;
+        this.columns = j;
+        this.nrOfMines = mines;
         this.cells = new int[rows][columns];
         this.mines = new int[rows][columns];
         addTimer();
@@ -57,23 +53,26 @@ public class ModelGameBoard implements Game {
         }
         System.out.println("placed " + nrOfMines + " mines");
         System.out.println("placedMines is now " + placedMines);
-        viewSweeper.setBombs(placedMines);
     }
 
     public void cellClicked(int i, int j) {
         System.out.println(cells[i][j]);
-        if (cells[i][j] != 0)
+        if (cells[i][j] != CellValue.EMPTY.getValue())
             message = "Clicked cell, it was a " + cells[i][j];
         else
             message = "Clicked cell, it was empty";
-
     }
 
+    /**
+     * Calculate mine-adjacent-value for cell.
+     *
+     * @param i number of rows
+     * @param j number of columns
+     */
     public int cellValue(int i, int j) {
-        /**
-         * Calculate mine-adjacent-value for cell.
-         * @param totalCells total value for max 8 surrounding cells.
-         * @param cell value of surrounding cell.
+        /*
+        totalCells - total value for max 8 surrounding cells.
+        cell - value of surrounding cell.
          */
         int totalCells = 0;
         int cell = 0;
@@ -93,7 +92,7 @@ public class ModelGameBoard implements Game {
                 }
             }
             if (n == 2) {
-                if (i == 0 || j == cells.length - 1) {
+                if (i == 0 || j == cells[i].length - 1) {
                     cell = CellValue.EMPTY.getValue();
                 } else {
                     cell = cells[i - 1][j + 1];
@@ -107,7 +106,7 @@ public class ModelGameBoard implements Game {
                 }
             }
             if (n == 4) {
-                if (j == cells.length - 1) {
+                if (j == cells[i].length - 1) {
                     cell = CellValue.EMPTY.getValue();
                 } else {
                     cell = cells[i][j + 1];
@@ -128,7 +127,7 @@ public class ModelGameBoard implements Game {
                 }
             }
             if (n == 7) {
-                if (i == cells.length - 1 || j == cells.length - 1) {
+                if (i == cells.length - 1 || j == cells[i].length - 1) {
                     cell = CellValue.EMPTY.getValue();
                 } else {
                     cell = cells[i + 1][j + 1];
@@ -140,7 +139,9 @@ public class ModelGameBoard implements Game {
     }
 
     public void setCellValues() {
+        System.out.println("Length i: " + cells.length);
         for (int i = 0; i < cells.length; i++) {
+            System.out.println("Length j: " + cells[i].length);
             for (int j = 0; j < cells[i].length; j++) {
                 if (cells[i][j] != CellValue.MINE.getValue()) {
                     // calculate value, 0 for non-adjacent cells and >0 for mine-adjacent
@@ -157,11 +158,11 @@ public class ModelGameBoard implements Game {
         if (c < CellValue.MINE.getValue()) {
             cells[i][j] = CellValue.EMPTY.getValue();
             cellValue = CellValue.EMPTY.getValue();
-            System.out.println(cells[i][j]);
+            System.out.println("Empty cell: " + i + ", " + j + ". Value " + cells[i][j]);
         } else {
             cells[i][j] = c / CellValue.MINE.getValue();
             cellValue = c / CellValue.MINE.getValue();
-            System.out.println(cells[i][j]);
+            System.out.println("Mine-adjacent cell: " + i + ", " + j + ". Value " + cells[i][j]);
         }
         return cellValue;
     }
@@ -218,7 +219,7 @@ public class ModelGameBoard implements Game {
     @Override
     public boolean move(int i, int j) {
         boolean move = false;
-        if (cells[i][j] != CellValue.MAYBEMINE.getValue()) {
+        if (cells[i][j] != CellValue.MAYBE_MINE.getValue()) {
             if (openedCells == 0) {
                 startTimer();
                 tStart = System.nanoTime();
@@ -229,9 +230,7 @@ public class ModelGameBoard implements Game {
 
                 for (int e = 0; e < viewSweeper.getCells().length; ++e) {
                     for (int c = 0; c < viewSweeper.getCells()[e].length; ++c) {
-                        if (cells[e][c] != CellValue.OPEN.getValue()) {
-                            convertCellValuesToString(e, c);
-                        }
+                        convertCellValuesToString(e, c);
                         toggleCellVisibility(e, c, false);
                     }
                 }
@@ -259,6 +258,11 @@ public class ModelGameBoard implements Game {
     public void convertCellValuesToString(int i, int j) {
         if (cells[i][j] == CellValue.MINE.getValue()) {
             viewSweeper.getCells()[i][j].setText(String.valueOf("Mine"));
+        } else if (cells[i][j] == CellValue.OPEN.getValue() || cells[i][j] == CellValue.EMPTY.getValue()) {
+            viewSweeper.getCells()[i][j].setText(String.valueOf(""));
+        } else if (cells[i][j] == CellValue.MAYBE_MINE.getValue()) {
+            toggleMarkMine(i, j);
+            viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
         } else {
             viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
         }
@@ -266,6 +270,7 @@ public class ModelGameBoard implements Game {
 
     public void toggleCellVisibility(int i, int j, boolean value) {
         viewSweeper.getCells()[i][j].setEnabled(value);
+        viewSweeper.getCells()[i][j].setBackground(new Color(99, 99, 99));
     }
 
     public void addFlag() {
@@ -280,11 +285,17 @@ public class ModelGameBoard implements Game {
     }
 
     public boolean gameStatus() {
-        System.out.println("Cells opened" + openedCells);
-        if (openedCells == rows * columns - nrOfMines || isGoing == false) {
+        System.out.println("Cells opened " + openedCells);
+        if (openedCells == rows * columns - nrOfMines && isGoing == false) {
             System.out.println("All cells opened. Game end.");
+            viewSweeper.setGameStatus("Game ended successfully");
+            message = "Game ended successfully";
+            stopTimer();
+            return false;
+        }
+        if (isGoing == false) {
             viewSweeper.setGameStatus("Game over");
-            message = "Game Over!";
+            message = "You clicked on a mine!";
             stopTimer();
             return false;
         } else {
@@ -294,7 +305,7 @@ public class ModelGameBoard implements Game {
     }
 
     public void toggleMarkMine(int i, int j) {
-        if (cells[i][j] == CellValue.MAYBEMINE.getValue()) {
+        if (cells[i][j] == CellValue.MAYBE_MINE.getValue()) {
             cells[i][j] = mines[i][j];
             mines[i][j] = 0;
             viewSweeper.getCells()[i][j].setText("");
@@ -303,8 +314,9 @@ public class ModelGameBoard implements Game {
         } else {
             if (flags > 0) {
                 mines[i][j] = cells[i][j];
-                cells[i][j] = CellValue.MAYBEMINE.getValue();
-                viewSweeper.getCells()[i][j].setText("Mine");
+                cells[i][j] = CellValue.MAYBE_MINE.getValue();
+                viewSweeper.getCells()[i][j].setText("?");
+                viewSweeper.getCells()[i][j].setForeground(new Color(255, 0, 0));
                 message = "Set flag";
                 addFlag();
             }
@@ -313,11 +325,7 @@ public class ModelGameBoard implements Game {
     }
 
     public void addTimer() {
-        ActionListener timerPerformer = new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                viewSweeper.setTimerLabel(timePlayed());
-            }
-        };
+        ActionListener timerPerformer = evt -> viewSweeper.setTimerLabel(timePlayed());
 
         int delay = 1000;
 
@@ -329,6 +337,10 @@ public class ModelGameBoard implements Game {
     public long timePlayed() {
         long tCurrent = System.nanoTime();
         tRes = (tCurrent - tStart) / 1000000000L;
+        return tRes;
+    }
+
+    public long getTimePlayed() {
         return tRes;
     }
 
@@ -347,16 +359,6 @@ public class ModelGameBoard implements Game {
      */
     public int getNrOfMines() {
         return nrOfMines;
-    }
-
-    /**
-     * Setter for placed mines on board
-     *
-     * @param nrOfMines sets number of mines to be placed
-     * @see ControllerMineSweeper
-     */
-    public void setNrOfMines(int nrOfMines) {
-        this.nrOfMines = nrOfMines;
     }
 
     @Override
