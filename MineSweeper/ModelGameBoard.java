@@ -1,3 +1,5 @@
+import javafx.scene.control.Cell;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;

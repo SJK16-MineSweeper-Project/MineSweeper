@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -7,7 +8,7 @@ import java.awt.event.MouseListener;
 /**
  * Created by Maxie on 2017-01-17.
  */
-public class ControllerMineSweeper {
+public class ControllerMineSweeper extends MineSweeperException {
 
     private ModelGameBoard modelBoard;
     private ViewMineSweeper viewSweeper;
@@ -16,6 +17,7 @@ public class ControllerMineSweeper {
     private int columns;
     private int mines;
     private static String difficulty;
+    private boolean breakit;
 
     private CellListener cellListener;
     private ExitListener exitListener;
@@ -63,33 +65,70 @@ public class ControllerMineSweeper {
     public void setCustomDifficulty() {
         JTextField customRows = new JTextField();
         JTextField customColumns = new JTextField();
+        JLabel exceptionMessage = new JLabel();
         rows = 0;
         columns = 0;
         mines = 0;
         Object[] message = {
+                "", exceptionMessage,
                 "Rows", customRows,
                 "Columns", customColumns,
         };
         do {
-
             int option = JOptionPane.showConfirmDialog(null, message, "Enter custom settings",
                     JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
+                    setGameDifficulty();
+            }
             if (option == JOptionPane.OK_OPTION) {
-                rows = Integer.parseInt(customRows.getText());
-                columns = Integer.parseInt(customColumns.getText());
-
+                /**
+                 * Exception handling with try catch
+                 */
+                try {
+                    testUserInput(customRows, customColumns, exceptionMessage);
+                } catch (MineSweeperException e) {
+                    System.out.println(e);
+                }
             }
         }
-        while (rows < 2 && columns < 2);
+        while (breakit == false);
         mines = rows + columns;
 
         System.out.println("rows set to " + rows + " and columns set to " + columns + " with " + mines + " mines");
     }
 
+    public boolean testUserInput(JTextField customRows, JTextField customColumns, JLabel exceptionMessage ) throws MineSweeperException {
+        if(!customRows.getText().trim().isEmpty() && !customColumns.getText().trim().isEmpty()) {
+            int rows = Integer.parseInt(customRows.getText());
+            int columns = Integer.parseInt(customColumns.getText());
+            if (rows > 30 || rows < 2 || columns > 30 || columns < 2) {
+                exceptionMessage(exceptionMessage, "Max value is 30 and min value is 2");
+                throw new MineSweeperException("Invalid input");
+            } else {
+                this.rows = rows;
+                this.columns = columns;
+            }
+        }
+        if(customRows.getText().trim().isEmpty() || customColumns.getText().trim().isEmpty()) {
+            exceptionMessage(exceptionMessage, "Rows and column must not be empty");
+            throw new MineSweeperException("No input");
+        } else {
+            breakit = true;
+        }
+        return breakit;
+    }
+
+    public void exceptionMessage(JLabel exceptionMessage, String message) {
+        exceptionMessage.setText(message);
+        exceptionMessage.setForeground(new Color(255, 0, 0));
+    }
+
+
     /**
      * Method used to set the number of mines to be placed.
      * Harder difficulty adds more mines to the field.
      */
+    // Need to ad action for CANCEL_OPTION (Now throws NullPointerException)
     public String setGameDifficulty() {
         Object[] possibilities = {
                 GameDifficulty.VERY_EASY.getMessage(),
@@ -247,9 +286,11 @@ public class ControllerMineSweeper {
                 System.out.println("Right Worked");
                 for (int i = 0; i < viewSweeper.getCells().length; i++) {
                     for (int j = 0; j < viewSweeper.getCells()[i].length; j++) {
-                        if (e.getSource() == viewSweeper.getCells()[i][j]) {
-                            modelBoard.toggleMarkMine(i, j);
-                            viewSweeper.getMessages().setText(modelBoard.getMessage());
+                        if (viewSweeper.getCells()[i][j].getModel().isEnabled()) {
+                            if (e.getSource() == viewSweeper.getCells()[i][j]) {
+                                modelBoard.toggleMarkMine(i, j);
+                                viewSweeper.getMessages().setText(modelBoard.getMessage());
+                            }
                         }
                     }
                 }

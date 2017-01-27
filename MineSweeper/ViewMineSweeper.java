@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * Created by Maxie on 2017-01-17.
  */
-public class ViewMineSweeper extends JFrame {
+public class ViewMineSweeper extends JFrame implements View {
 
     private JPanel mainPanel;
     private JPanel panel;
@@ -37,6 +37,7 @@ public class ViewMineSweeper extends JFrame {
         createMenu();
         createWindow(rows, columns);
         createCells();
+        createLabels();
 
         scoreBoardList = new ArrayList<>();
     }
@@ -47,7 +48,8 @@ public class ViewMineSweeper extends JFrame {
      * @param rows    number of rows to be drawn
      * @param columns number of coulmns to be drawn
      */
-    private void createWindow(int rows, int columns) {
+    @Override
+    public void createWindow(int rows, int columns) {
 
         //create main panel
         mainPanel = new JPanel();
@@ -97,6 +99,10 @@ public class ViewMineSweeper extends JFrame {
                 System.exit(0);
             }
         });
+    }
+
+    @Override
+    public void createLabels() {
 
         //create flags
         flagsLabel = new JLabel();
@@ -138,7 +144,8 @@ public class ViewMineSweeper extends JFrame {
 
     }
 
-    private void createMenu() {
+    @Override
+    public void createMenu() {
         menuBar = new JMenuBar();
 
         JMenu systemMenu = new JMenu("System"); //create menubar titled system
@@ -154,7 +161,8 @@ public class ViewMineSweeper extends JFrame {
         systemMenu.add(exitOption);
     }
 
-    private void createCells() {
+    @Override
+    public void createCells() {
 
         setCells(cells);
         for (int i = 0; i < getCells().length; i++) {
@@ -185,6 +193,7 @@ public class ViewMineSweeper extends JFrame {
         scoreListItem.setText(name + ", " + "level " + level + ", " + time + " seconds [" + completed + "]" );
     }
 
+    @Override
     public void setGameStatus(String message) {
         gameStatus.setText(message);
     }
@@ -211,10 +220,12 @@ public class ViewMineSweeper extends JFrame {
         return cells;
     }
 
+    @Override
     public JMenuItem getExitOption() {
         return this.exitOption;
     }
 
+    @Override
     public JMenuItem getNewGameOption() {
         return this.newGameOption;
     }
