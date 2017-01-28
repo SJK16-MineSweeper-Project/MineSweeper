@@ -1,3 +1,5 @@
+package MineSweeper;
+
 import javax.swing.*;
 
 /**

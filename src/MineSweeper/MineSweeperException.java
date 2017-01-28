@@ -1,6 +1,8 @@
 /**
  * Created by bartek on 2017-01-27.
  */
+package MineSweeper;
+
 public class MineSweeperException extends Exception {
 
     public MineSweeperException()
