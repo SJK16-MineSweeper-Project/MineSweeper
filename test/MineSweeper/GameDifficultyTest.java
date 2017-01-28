@@ -1,9 +1,8 @@
 package MineSweeper;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created by Maxie on 2017-01-26.
