@@ -267,7 +267,9 @@ public class ModelGameBoard implements Game {
             toggleMarkMine(i, j);
             viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
         } else {
-            viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
+            //viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
+            System.out.println("Cell value: " + cells[i][j]);
+            viewSweeper.setImage(viewSweeper.getCells()[i][j], cells[i][j]);
         }
     }
 

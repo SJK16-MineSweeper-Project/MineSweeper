@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.*;
 
 /**
@@ -33,6 +34,8 @@ public class ViewMineSweeper extends JFrame implements View {
     private JMenuItem newGameOption;
 
     private JButton[][] cells;
+
+    public Map<Integer,String[]> kMap;
 
     public ViewMineSweeper(int rows, int columns) {
         this.cells = new JButton[rows][columns];
@@ -180,6 +183,20 @@ public class ViewMineSweeper extends JFrame implements View {
                 panel.add(getCells()[i][j]);
             }
         }
+    }
+
+    public void loadImages() {
+        kMap = new HashMap<Integer,String[]>();
+        for(int k = 0; k < 5; k++){
+            kMap.put(k, new String[3]);
+        }
+    }
+
+    public void setImage(JButton cell, int cellValue) {
+        String number = String.valueOf(cellValue);
+        Image img = new ProxyImage(getClass().getResource("/images/" + number + ".png"));
+        cell.setIcon(new ImageIcon(img.display()));
+        cell.setIcon(new ImageIcon(img.display()));
     }
 
     public void createScoreBoardLabel() {
