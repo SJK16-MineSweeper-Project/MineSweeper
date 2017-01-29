@@ -1,5 +1,6 @@
 package MineSweeper;
 
+import javax.swing.*;
 import java.net.URL;
 
 /**
@@ -8,17 +9,17 @@ import java.net.URL;
 public class ProxyImage implements Image{
 
     private RealImage realImage;
-    private URL fileName;
+    private URL urlString;
 
-    public ProxyImage(URL fileName){
-        this.fileName = fileName;
+    public ProxyImage(URL urlString){
+        this.urlString = urlString;
     }
 
     @Override
-    public URL display() {
+    public ImageIcon display() {
         if(realImage == null){
             System.out.println("Real image is null");
-            realImage = new RealImage(fileName);
+            realImage = new RealImage(urlString);
         }
         return realImage.display();
     }

@@ -1,10 +1,10 @@
 package MineSweeper;
 
-import java.net.URL;
+import javax.swing.*;
 
 /**
  * Created by bartek on 2017-01-29.
  */
 public interface Image {
-    URL display();
+    ImageIcon display();
 }

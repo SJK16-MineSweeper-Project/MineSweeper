@@ -1,5 +1,6 @@
 package MineSweeper;
 
+import javax.swing.*;
 import java.net.URL;
 
 /**
@@ -7,17 +8,24 @@ import java.net.URL;
  */
 public class RealImage implements Image {
 
-    private URL fileName;
+    private URL urlString;
+    private ImageIcon iconName;
 
-    public RealImage(URL fileName){
-        this.fileName = fileName;
-        //display();
+    public RealImage(URL urlString){
+        this.urlString = urlString;
+        System.out.println("Creating real image");
+        loadImage();
     }
 
     @Override
-    public URL display() {
-        System.out.println("Displaying " + fileName);
-        return fileName;
+    public ImageIcon display() {
+        System.out.println("Displaying real image");
+        return iconName;
     }
 
+    public ImageIcon loadImage() {
+        System.out.println("Loading real image");
+        iconName = new ImageIcon(urlString);
+        return iconName;
+    }
 }
