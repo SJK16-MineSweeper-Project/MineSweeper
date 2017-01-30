@@ -267,13 +267,16 @@ public class ModelGameBoard implements Game {
             toggleMarkMine(i, j);
             viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
         } else {
-            viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
+            //viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
+            System.out.println("Cell value: " + cells[i][j]);
+            viewSweeper.setImage(viewSweeper.getCells()[i][j], cells[i][j]);
         }
     }
 
     public void toggleCellVisibility(int i, int j, boolean value) {
         viewSweeper.getCells()[i][j].setEnabled(value);
         viewSweeper.getCells()[i][j].setBackground(new Color(99, 99, 99));
+        viewSweeper.getCells()[i][j].setForeground(new Color(Color.BITMASK));
     }
 
     public void addFlag() {
@@ -284,7 +287,6 @@ public class ModelGameBoard implements Game {
     public void removeFlag() {
         ++flags;
         viewSweeper.setFlagsLabel(flags);
-        ;
     }
 
     public boolean gameStatus() {
