@@ -84,5 +84,4 @@ class ViewMineSweeperTest {
     void closeWindow() {
 
     }
-
 }

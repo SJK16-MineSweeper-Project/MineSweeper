@@ -26,5 +26,4 @@ class CellValueTest {
         assertEquals(expectedMine, mine);
         assertEquals(expectedOpen, open);
     }
-
 }

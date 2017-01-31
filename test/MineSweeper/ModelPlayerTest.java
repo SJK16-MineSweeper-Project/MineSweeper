@@ -69,5 +69,4 @@ class ModelPlayerTest {
         assertEquals(expectedLevel, level);
         assertEquals(expectedTime, time);
     }
-
 }

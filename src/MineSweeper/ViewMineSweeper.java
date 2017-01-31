@@ -82,6 +82,7 @@ public class ViewMineSweeper extends JFrame implements View {
         scoreBoard = new JPanel();
         scoreBoard.setLayout(new BoxLayout(scoreBoard, BoxLayout.PAGE_AXIS));
         scoreBoard.setOpaque(true);
+        scoreBoard.add(Box.createRigidArea(new Dimension(0,5)));
         scoreBoard.setBackground(Color.DARK_GRAY);
 
         //add panels to main panel
@@ -189,10 +190,17 @@ public class ViewMineSweeper extends JFrame implements View {
 
     public void loadImages() {
         kMap = new HashMap<>();
-        for(int k = 1; k < 6; k++){
+        for(int k = 1; k < 9; k++){
             Image img = new ProxyImage(getClass().getResource("/images/" + k + ".png"));
             kMap.put(k, img);
         }
+
+        Image img100 = new ProxyImage(getClass().getResource("/images/100.png"));
+        kMap.put(100, img100);
+        Image img1000 = new ProxyImage(getClass().getResource("/images/1000.png"));
+        kMap.put(1000, img1000);
+        System.out.println(kMap);
+        System.out.println(kMap.get(100));
     }
 
     public void setImage(JButton cell, int cellValue) {

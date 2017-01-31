@@ -50,5 +50,4 @@ class ModelGameBoardTest {
 
         assertEquals(expected, status);
     }
-
 }

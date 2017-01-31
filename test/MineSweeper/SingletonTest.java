@@ -34,5 +34,4 @@ class SingletonTest {
     void getScoreList() {
 
     }
-
 }

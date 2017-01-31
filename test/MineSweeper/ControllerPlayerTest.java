@@ -1,48 +1,45 @@
 package MineSweeper;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created by Maxie on 2017-01-26.
  */
-class ControllerPlayerTest {
+public class ControllerPlayerTest {
 
     private ControllerPlayer controllerPlayer;
     private ViewMineSweeper viewSweeper;
 
-    @BeforeEach
-    void setUp() {
+    @Before
+    public void setUp() {
         this.controllerPlayer = new ControllerPlayer(viewSweeper);
     }
 
-    @AfterEach
-    void tearDown() {
+    @After
+    public void tearDown() {
         controllerPlayer = null;
     }
 
     @Test
-    void setPlayerScore() {
+    public void setPlayerScore() {
 
 
     }
 
     @Test
-    void addPlayerScore() {
+    public void addPlayerScore() {
 
     }
 
     @Test
-    void setPlayerName() {
+    public void setPlayerName() {
 
     }
 
     @Test
-    void getPlayer() {
+    public void getPlayer() {
 
     }
-
 }
