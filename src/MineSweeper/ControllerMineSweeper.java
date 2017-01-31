@@ -267,7 +267,7 @@ public class ControllerMineSweeper extends MineSweeperException {
                     }
                 }
             }
-            if (modelBoard.gameStatus() == false) {
+            if (modelBoard.getIsGoing() == false) {
                 player.setPlayerScore(difficulty, modelBoard.getTimePlayed(), modelBoard.getCompleted());
                 player.addPlayerScore();
             }

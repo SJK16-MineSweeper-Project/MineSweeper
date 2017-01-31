@@ -209,6 +209,12 @@ public class ViewMineSweeper extends JFrame implements View {
         cell.setDisabledIcon(img.display());
     }
 
+    public ImageIcon setMessageIcon(int cellValue) {
+        Image img = kMap.get(cellValue);
+        ImageIcon icon = img.display();
+        return icon;
+    }
+
     public void createScoreBoardLabel() {
         scoreBoardLabel = new JLabel();
         scoreBoardLabel.setForeground(Color.WHITE);

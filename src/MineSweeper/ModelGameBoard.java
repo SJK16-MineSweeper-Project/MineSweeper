@@ -28,7 +28,6 @@ public class ModelGameBoard implements Game {
     private String completed;
 
     private boolean testMode = true;
-    int game = 0;
 
     public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j, int mines) {
         this.viewSweeper = viewSweeper;
@@ -241,13 +240,11 @@ public class ModelGameBoard implements Game {
                 startTimer();
                 tStart = System.nanoTime();
                 System.out.println("Starting elapsed time: " + tStart);
-            }
-            if (cells[i][j] == CellValue.MINE.getValue()) {
+            } if (cells[i][j] == CellValue.MINE.getValue()) {
                 convertCellValuesToImage(i, j);
                 System.out.println("Bomb. Game over!");
                 isGoing = false;
                 gameStatus();
-                JOptionPane.showMessageDialog(null, "You hit a mine! Game over.");
             } else if (cells[i][j] == CellValue.EMPTY.getValue()) {
                 cells[i][j] = CellValue.OPEN.getValue();
                 toggleCellVisibility(i, j, false);
@@ -351,19 +348,20 @@ public class ModelGameBoard implements Game {
             completed = "Game completed";
             stopTimer();
             flagMines();
-            JOptionPane.showConfirmDialog(null, "Congratulations! You made it.", "Game ended successfully",
-                    JOptionPane.OK_OPTION);
-            game++;
-            System.out.println("Game: " + game);
+            isGoing = false; // checked at click in CellListener (in Controller)
+            JOptionPane.showMessageDialog(null, "Congratulations! You made it.", "Game ended successfully",
+                    JOptionPane.OK_OPTION, viewSweeper.setMessageIcon(CellValue.MAYBE_MINE.getValue()));
             return false;
         }
-        if (isGoing == false) {
+        else if (isGoing == false) {
             viewSweeper.setGameStatus("Game over");
             message = "You clicked on a mine!";
             completed = "Game not completed";
             stopTimer();
             setWrongFlag();
             revealAll();
+            JOptionPane.showMessageDialog(null, "You hit a mine! Game over.", "Game over",
+                    JOptionPane.OK_OPTION, viewSweeper.setMessageIcon(CellValue.MINE.getValue()));
             return false;
         } else {
             System.out.println("Still cells to open.");
@@ -437,6 +435,10 @@ public class ModelGameBoard implements Game {
         else
             gameStatus = "Game over";
         return gameStatus;
+    }
+
+    public boolean getIsGoing() {
+        return isGoing;
     }
 
     @Override
