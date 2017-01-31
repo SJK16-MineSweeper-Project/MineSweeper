@@ -59,7 +59,8 @@ public class ControllerPlayer {
                 if (confirmExit == JOptionPane.YES_OPTION) {
                     System.exit(0);
                 } else {
-                    player.setName("default");
+                    //player.setName("default");
+                    setPlayerName();
                 }
             }
         } while (player.getName() != null && !player.getName().matches("[a-zA-Z]+"));
