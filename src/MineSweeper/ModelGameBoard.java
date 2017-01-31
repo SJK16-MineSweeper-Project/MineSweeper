@@ -28,6 +28,7 @@ public class ModelGameBoard implements Game {
     private String completed;
 
     private boolean testMode = true;
+    int game = 0;
 
     public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j, int mines) {
         this.viewSweeper = viewSweeper;
@@ -246,6 +247,7 @@ public class ModelGameBoard implements Game {
                 System.out.println("Bomb. Game over!");
                 isGoing = false;
                 gameStatus();
+                JOptionPane.showMessageDialog(null, "You hit a mine! Game over.");
             } else if (cells[i][j] == CellValue.EMPTY.getValue()) {
                 cells[i][j] = CellValue.OPEN.getValue();
                 toggleCellVisibility(i, j, false);
@@ -319,7 +321,6 @@ public class ModelGameBoard implements Game {
         } else if (cells[i][j] == CellValue.MAYBE_MINE.getValue()) {
             toggleMarkMine(i, j);
         } else {
-            //viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
             System.out.println("Cell value: " + cells[i][j]);
             viewSweeper.setImage(viewSweeper.getCells()[i][j], cells[i][j]);
         }
@@ -350,6 +351,10 @@ public class ModelGameBoard implements Game {
             completed = "Game completed";
             stopTimer();
             flagMines();
+            JOptionPane.showConfirmDialog(null, "Congratulations! You made it.", "Game ended successfully",
+                    JOptionPane.OK_OPTION);
+            game++;
+            System.out.println("Game: " + game);
             return false;
         }
         if (isGoing == false) {
