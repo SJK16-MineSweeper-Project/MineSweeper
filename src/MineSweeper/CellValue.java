@@ -6,7 +6,7 @@ package MineSweeper;
  * Created by Maxie on 2017-01-20.
  */
 public enum CellValue {
-    OPEN(-1), EMPTY(0), MINE(100), MAYBE_MINE(1000);
+    OPEN(-1), EMPTY(0), MINE(100), MAYBE_MINE(1000), WRONG_FLAG(10000);
 
     private final int value;
 

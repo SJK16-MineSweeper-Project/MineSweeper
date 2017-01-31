@@ -198,8 +198,8 @@ public class ViewMineSweeper extends JFrame implements View {
         kMap.put(100, img100);
         Image img1000 = new ProxyImage(getClass().getResource("/images/1000.png"));
         kMap.put(1000, img1000);
-        System.out.println(kMap);
-        System.out.println(kMap.get(100));
+        Image img10000 = new ProxyImage(getClass().getResource("/images/10000.png"));
+        kMap.put(10000, img10000);
 
     }
 
