@@ -1,87 +1,85 @@
 package MineSweeper;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created by Maxie on 2017-01-26.
  */
-class ViewMineSweeperTest {
-    @BeforeEach
+public class ViewMineSweeperTest {
+    @Before
     void setUp() {
 
     }
 
-    @AfterEach
-    void tearDown() {
+    @After
+    public void tearDown() {
 
     }
 
     @Test
-    void createScoreBoardLabel() {
+    public void createScoreBoardLabel() {
 
     }
 
     @Test
-    void setScoreBoardLabel() {
+    public void setScoreBoardLabel() {
 
     }
 
     @Test
-    void setGameStatus() {
+    public void setGameStatus() {
 
     }
 
     @Test
-    void setBombs() {
+    public void setBombs() {
 
     }
 
     @Test
-    void setDifficultyLabel() {
+    public void setDifficultyLabel() {
 
     }
 
     @Test
-    void setTimerLabel() {
+    public void setTimerLabel() {
 
     }
 
     @Test
-    void setFlagsLabel() {
+    public void setFlagsLabel() {
 
     }
 
     @Test
-    void getCells() {
+    public void getCells() {
 
     }
 
     @Test
-    void getExitOption() {
+    public void getExitOption() {
 
     }
 
     @Test
-    void getNewGameOption() {
+    public void getNewGameOption() {
 
     }
 
     @Test
-    void setCells() {
+    public void setCells() {
 
     }
 
     @Test
-    void getMessages() {
+    public void getMessages() {
 
     }
 
     @Test
-    void closeWindow() {
+    public void closeWindow() {
 
     }
 

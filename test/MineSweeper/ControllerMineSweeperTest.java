@@ -1,40 +1,40 @@
 package MineSweeper;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created by Maxie on 2017-01-26.
  */
 class ControllerMineSweeperTest {
-    @BeforeEach
-    void setUp() {
+    @Before
+    public void setUp() {
 
     }
 
-    @AfterEach
-    void tearDown() {
-
-    }
-
-    @Test
-    void setCustomDifficulty() {
+    @After
+    public void tearDown() {
 
     }
 
     @Test
-    void setGameDifficulty() {
+    public void setCustomDifficulty() {
 
     }
 
     @Test
-    void getDifficulty() {
+    public void setGameDifficulty() {
 
     }
 
     @Test
-    void main() {
+    public void getDifficulty() {
+
+    }
+
+    @Test
+    public void main() {
 
     }
 

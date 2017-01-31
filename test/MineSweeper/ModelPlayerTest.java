@@ -1,19 +1,19 @@
 package MineSweeper;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Maxie on 2017-01-26.
  */
-class ModelPlayerTest {
+public class ModelPlayerTest {
     ModelPlayer player;
 
-    @BeforeEach
-    void setUp() {
+    @Before
+    public void setUp() {
         this.player = new ModelPlayer();
         player.setName("test");
         player.setCompleted("Done");
@@ -22,8 +22,8 @@ class ModelPlayerTest {
 
     }
 
-    @AfterEach
-    void tearDown() {
+    @After
+    public void tearDown() {
         player.setName(null);
         player.setCompleted(null);
         player.setLevel(null);
@@ -31,29 +31,29 @@ class ModelPlayerTest {
     }
 
     @Test
-    String getName() {
+    public String getName() {
         return player.getName();
     }
 
 
     @Test
-    String getLevel() {
+    public String getLevel() {
         return player.getLevel();
     }
 
 
     @Test
-    long getTime() {
+    public long getTime() {
         return player.getTime();
     }
 
     @Test
-    String getCompleted() {
+    public String getCompleted() {
         return player.getCompleted();
     }
 
     @Test
-    void assertData() {
+    public void assertData() {
         String name = getName();
         String completed = getCompleted();
         String level = getLevel();

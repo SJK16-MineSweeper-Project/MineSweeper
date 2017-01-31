@@ -229,8 +229,8 @@ public class ModelGameBoard implements Game {
                 System.out.println("Starting elapsed time: " + tStart);
             }
             if (cells[i][j] == CellValue.MINE.getValue()) {
-                viewSweeper.getCells()[i][j].setText("Bomb");
-
+                //viewSweeper.getCells()[i][j].setText("Bomb");
+                convertCellValuesToString(i, j);
                 for (int e = 0; e < viewSweeper.getCells().length; ++e) {
                     for (int c = 0; c < viewSweeper.getCells()[e].length; ++c) {
                         convertCellValuesToString(e, c);
@@ -260,12 +260,18 @@ public class ModelGameBoard implements Game {
 
     public void convertCellValuesToString(int i, int j) {
         if (cells[i][j] == CellValue.MINE.getValue()) {
-            viewSweeper.getCells()[i][j].setText(String.valueOf("Mine"));
+            //viewSweeper.getCells()[i][j].setText(String.valueOf("Mine"));
+            System.out.println("Cell value: " + cells[i][j]);
+            viewSweeper.setImage(viewSweeper.getCells()[i][j], cells[i][j]);
         } else if (cells[i][j] == CellValue.OPEN.getValue() || cells[i][j] == CellValue.EMPTY.getValue()) {
+            System.out.println("Cell value: " + cells[i][j]);
+            // Dont convert cell to image as there are no images for OPEN and EMPTY
             viewSweeper.getCells()[i][j].setText(String.valueOf(""));
         } else if (cells[i][j] == CellValue.MAYBE_MINE.getValue()) {
             toggleMarkMine(i, j);
-            viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
+            //viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
+            System.out.println("Cell value: " + cells[i][j]);
+            viewSweeper.setImage(viewSweeper.getCells()[i][j], cells[i][j]);
         } else {
             //viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
             System.out.println("Cell value: " + cells[i][j]);

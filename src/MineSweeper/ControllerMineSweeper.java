@@ -142,6 +142,10 @@ public class ControllerMineSweeper extends MineSweeperException {
         difficulty = (String) JOptionPane.showInputDialog(null, "Choose difficulty", null,
                 JOptionPane.PLAIN_MESSAGE, null, possibilities, GameDifficulty.EASY.getMessage());
 
+        if(difficulty == null) {
+            System.exit(0);
+        }
+
         switch (getDifficulty()) {
             case "Very Easy":
                 mines = GameDifficulty.VERY_EASY.getMines();
@@ -177,6 +181,8 @@ public class ControllerMineSweeper extends MineSweeperException {
                 setCustomDifficulty();
                 System.out.println("Set game to Custom");
                 break;
+            case "null":
+                System.exit(0);
             default:
                 break;
         }
