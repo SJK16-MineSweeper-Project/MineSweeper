@@ -1,16 +1,16 @@
 package MineSweeper;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by Maxie on 2017-01-26.
  */
-public class CellValueTest {
+class CellValueTest {
 
     @Test
-    public void getValue() {
+    void getValue() {
         int empty = CellValue.EMPTY.getValue();
         int maybeMine = CellValue.MAYBE_MINE.getValue();
         int mine = CellValue.MINE.getValue();
@@ -26,5 +26,4 @@ public class CellValueTest {
         assertEquals(expectedMine, mine);
         assertEquals(expectedOpen, open);
     }
-
 }

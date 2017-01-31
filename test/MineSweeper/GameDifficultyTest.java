@@ -1,15 +1,15 @@
 package MineSweeper;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created by Maxie on 2017-01-26.
  */
-public class GameDifficultyTest {
+class GameDifficultyTest {
     @Test
-    public void getMines() {
+    void getMines() {
         int mines = GameDifficulty.EASY.getMines();
         int expected = 16;
 
@@ -17,7 +17,7 @@ public class GameDifficultyTest {
     }
 
     @Test
-    public void getMessage() {
+    void getMessage() {
         String message = GameDifficulty.EASY.getMessage();
         String expected = "Easy";
 
@@ -25,7 +25,7 @@ public class GameDifficultyTest {
     }
 
     @Test
-    public void getRows() {
+    void getRows() {
         int rows = GameDifficulty.EASY.getRows();
         int expected = 8;
 
@@ -33,7 +33,7 @@ public class GameDifficultyTest {
     }
 
     @Test
-    public void getColumns() {
+    void getColumns() {
         int columns = GameDifficulty.EASY.getColumns();
         int expected = 8;
 

@@ -106,6 +106,7 @@ public class ViewMineSweeper extends JFrame implements View {
                 System.exit(0);
             }
         });
+
     }
 
     @Override
@@ -200,7 +201,6 @@ public class ViewMineSweeper extends JFrame implements View {
         kMap.put(1000, img1000);
         System.out.println(kMap);
         System.out.println(kMap.get(100));
-
     }
 
     public void setImage(JButton cell, int cellValue) {

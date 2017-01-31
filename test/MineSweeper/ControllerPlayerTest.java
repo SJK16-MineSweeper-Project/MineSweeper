@@ -42,5 +42,4 @@ public class ControllerPlayerTest {
     public void getPlayer() {
 
     }
-
 }
