@@ -1,36 +1,37 @@
 package MineSweeper;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by Maxie on 2017-01-26.
  */
 class SingletonTest {
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
     }
 
-    @After
-    public void tearDown() {
-
-    }
-
-    @Test
-    public void getInstance() {
+    @AfterEach
+    void tearDown() {
 
     }
 
     @Test
-    public void setScoreList() {
+    void getInstance() {
 
     }
 
     @Test
-    public void getScoreList() {
+    void setScoreList() {
 
     }
 
+    @Test
+    void getScoreList() {
+
+    }
 }

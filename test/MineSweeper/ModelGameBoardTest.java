@@ -1,14 +1,13 @@
 package MineSweeper;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Created by Maxie on 2017-01-26.
  */
-public class ModelGameBoardTest {
+class ModelGameBoardTest {
 
     ModelGameBoard modelBoard;
     ViewMineSweeper viewSweeper;
@@ -16,18 +15,18 @@ public class ModelGameBoardTest {
     int rows = 8;
     int columns = 8;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         this.modelBoard = new ModelGameBoard(viewSweeper, rows, columns, mines);
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         modelBoard = null;
     }
 
     @Test
-    public void placeMines() {
+    void placeMines() {
         modelBoard.placeMines(mines);
 
         int placedMines = modelBoard.getNrOfMines();
@@ -37,7 +36,7 @@ public class ModelGameBoardTest {
     }
 
     @Test
-    public void getNrOfMines() {
+    void getNrOfMines() {
         int mines = modelBoard.getNrOfMines();
         int expected = 10;
 
@@ -45,19 +44,10 @@ public class ModelGameBoardTest {
     }
 
     @Test
-    public void getStatus() {
+    void getStatus() {
         boolean status = modelBoard.gameStatus();
         boolean expected = true; //should be true since game hasn't been set to isGoing = false
 
         assertEquals(expected, status);
     }
-
-    @Test
-    public void cellClicked() {
-        int cellValue = CellValue.EMPTY.getValue();
-        int expected = 0;
-
-        assertEquals(expected, cellValue);
-    }
-
 }

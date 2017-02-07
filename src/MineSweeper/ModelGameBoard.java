@@ -457,5 +457,4 @@ public class ModelGameBoard implements Game {
     public String getCompleted() {
         return completed;
     }
-
 }
