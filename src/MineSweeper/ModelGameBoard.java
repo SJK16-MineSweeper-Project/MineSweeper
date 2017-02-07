@@ -27,6 +27,8 @@ public class ModelGameBoard implements Game {
     private String message;
     private String completed;
 
+    private boolean testMode = true;
+
     public ModelGameBoard(ViewMineSweeper viewSweeper, int i, int j, int mines) {
         this.viewSweeper = viewSweeper;
         this.rows = i;
@@ -162,12 +164,21 @@ public class ModelGameBoard implements Game {
             cells[i][j] = CellValue.EMPTY.getValue();
             cellValue = CellValue.EMPTY.getValue();
             System.out.println("Empty cell: " + i + ", " + j + ". Value " + cells[i][j]);
+            testMode(i, j, cellValue);
         } else {
             cells[i][j] = c / CellValue.MINE.getValue();
             cellValue = c / CellValue.MINE.getValue();
             System.out.println("Mine-adjacent cell: " + i + ", " + j + ". Value " + cells[i][j]);
+            testMode(i, j, cellValue);
         }
         return cellValue;
+    }
+
+    // In testmode alla cell values are shown except for empty cells
+    public void testMode(int i, int j, int cellValue) {
+        if(testMode) {
+            viewSweeper.getCells()[i][j].setText(String.valueOf(cellValue));
+        }
     }
 
     public void openNeighbours(int i, int j) {
@@ -222,21 +233,15 @@ public class ModelGameBoard implements Game {
     @Override
     public boolean move(int i, int j) {
         boolean move = false;
-        if (cells[i][j] != CellValue.MAYBE_MINE.getValue()) {
+        if (cells[i][j] == CellValue.MAYBE_MINE.getValue()) {
+            message = "You cannot open a cell marked with a flag!";
+        } else {
             if (openedCells == 0) {
                 startTimer();
                 tStart = System.nanoTime();
                 System.out.println("Starting elapsed time: " + tStart);
-            }
-            if (cells[i][j] == CellValue.MINE.getValue()) {
-                //viewSweeper.getCells()[i][j].setText("Bomb");
-                convertCellValuesToString(i, j);
-                for (int e = 0; e < viewSweeper.getCells().length; ++e) {
-                    for (int c = 0; c < viewSweeper.getCells()[e].length; ++c) {
-                        convertCellValuesToString(e, c);
-                        toggleCellVisibility(e, c, false);
-                    }
-                }
+            } if (cells[i][j] == CellValue.MINE.getValue()) {
+                convertCellValuesToImage(i, j);
                 System.out.println("Bomb. Game over!");
                 isGoing = false;
                 gameStatus();
@@ -248,7 +253,7 @@ public class ModelGameBoard implements Game {
                 gameStatus();
             } else {
                 toggleCellVisibility(i, j, false);
-                convertCellValuesToString(i, j);
+                convertCellValuesToImage(i, j);
                 ++openedCells;
                 gameStatus();
             }
@@ -258,9 +263,52 @@ public class ModelGameBoard implements Game {
         return move;
     }
 
-    public void convertCellValuesToString(int i, int j) {
+    public void setWrongFlag() {
+        if(flags < getNrOfMines()) {
+            for (int i = 0; i < cells.length; i++) {
+                for (int j = 0; j < cells[i].length; j++) {
+                    if (cells[i][j] == CellValue.MAYBE_MINE.getValue() &&
+                            mines[i][j] != CellValue.MINE.getValue()) {
+                        cells[i][j] = CellValue.WRONG_FLAG.getValue();
+                    }
+                }
+            }
+        }
+    }
+
+    // If cell is not flagged (and not clicked) when game end then we mark it with a flag
+    // Already correctly flagged cells are toggled to false visibility
+
+    public void flagMines() {
+        for (int i = 0; i < cells.length; ++i) {
+            for (int j = 0; j < cells[i].length; ++j) {
+                if (cells[i][j] == CellValue.MINE.getValue()) {
+                    viewSweeper.setImage(viewSweeper.getCells()[i][j], CellValue.MAYBE_MINE.getValue());
+                    toggleCellVisibility(i, j, false);
+                }
+                if(cells[i][j] == CellValue.MAYBE_MINE.getValue()) {
+                    toggleCellVisibility(i, j, false);
+                }
+            }
+        }
+    }
+    
+    // Reveal all cells value (if game ended) by converting cells' value to image
+    // Except for those that are flagged correctly
+    public void revealAll() {
+        for (int i = 0; i < viewSweeper.getCells().length; ++i) {
+            for (int j = 0; j < viewSweeper.getCells()[i].length; ++j) {
+                if(cells[i][j] != CellValue.MAYBE_MINE.getValue()
+                        && mines[i][j] != CellValue.MINE.getValue()) {
+                    convertCellValuesToImage(i, j);
+                }
+                toggleCellVisibility(i, j, false);
+            }
+        }
+    }
+
+    public void convertCellValuesToImage(int i, int j) {
         if (cells[i][j] == CellValue.MINE.getValue()) {
-            //viewSweeper.getCells()[i][j].setText(String.valueOf("Mine"));
             System.out.println("Cell value: " + cells[i][j]);
             viewSweeper.setImage(viewSweeper.getCells()[i][j], cells[i][j]);
         } else if (cells[i][j] == CellValue.OPEN.getValue() || cells[i][j] == CellValue.EMPTY.getValue()) {
@@ -269,11 +317,7 @@ public class ModelGameBoard implements Game {
             viewSweeper.getCells()[i][j].setText(String.valueOf(""));
         } else if (cells[i][j] == CellValue.MAYBE_MINE.getValue()) {
             toggleMarkMine(i, j);
-            //viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
-            System.out.println("Cell value: " + cells[i][j]);
-            viewSweeper.setImage(viewSweeper.getCells()[i][j], cells[i][j]);
         } else {
-            //viewSweeper.getCells()[i][j].setText(String.valueOf(cells[i][j]));
             System.out.println("Cell value: " + cells[i][j]);
             viewSweeper.setImage(viewSweeper.getCells()[i][j], cells[i][j]);
         }
@@ -297,19 +341,27 @@ public class ModelGameBoard implements Game {
 
     public boolean gameStatus() {
         System.out.println("Cells opened " + openedCells);
-        if (openedCells == rows * columns - nrOfMines && isGoing == false) {
+        if (openedCells == rows * columns - nrOfMines) {
             System.out.println("All cells opened. Game end.");
             viewSweeper.setGameStatus("Game ended successfully");
             message = "Game ended successfully";
             completed = "Game completed";
             stopTimer();
+            flagMines();
+            isGoing = false; // checked at click in CellListener (in Controller)
+            JOptionPane.showMessageDialog(null, "Congratulations! You made it.", "Game ended successfully",
+                    JOptionPane.OK_OPTION, viewSweeper.setMessageIcon(CellValue.MAYBE_MINE.getValue()));
             return false;
         }
-        if (isGoing == false) {
+        else if (isGoing == false) {
             viewSweeper.setGameStatus("Game over");
             message = "You clicked on a mine!";
             completed = "Game not completed";
             stopTimer();
+            setWrongFlag();
+            revealAll();
+            JOptionPane.showMessageDialog(null, "You hit a mine! Game over.", "Game over",
+                    JOptionPane.OK_OPTION, viewSweeper.setMessageIcon(CellValue.MINE.getValue()));
             return false;
         } else {
             System.out.println("Still cells to open.");
@@ -321,15 +373,15 @@ public class ModelGameBoard implements Game {
         if (cells[i][j] == CellValue.MAYBE_MINE.getValue()) {
             cells[i][j] = mines[i][j];
             mines[i][j] = 0;
-            viewSweeper.getCells()[i][j].setText("");
+            // Remove image
+            viewSweeper.getCells()[i][j].setIcon(null);
             message = "removed flag from";
             removeFlag();
         } else {
             if (flags > 0) {
                 mines[i][j] = cells[i][j];
                 cells[i][j] = CellValue.MAYBE_MINE.getValue();
-                viewSweeper.getCells()[i][j].setText("?");
-                viewSweeper.getCells()[i][j].setForeground(new Color(255, 0, 0));
+                viewSweeper.setImage(viewSweeper.getCells()[i][j], cells[i][j]);
                 message = "Set flag";
                 addFlag();
             }
@@ -383,6 +435,10 @@ public class ModelGameBoard implements Game {
         else
             gameStatus = "Game over";
         return gameStatus;
+    }
+
+    public boolean getIsGoing() {
+        return isGoing;
     }
 
     @Override

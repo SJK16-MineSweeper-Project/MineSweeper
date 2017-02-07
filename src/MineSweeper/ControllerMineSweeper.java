@@ -100,7 +100,8 @@ public class ControllerMineSweeper extends MineSweeperException {
     }
 
     public boolean testUserInput(JTextField customRows, JTextField customColumns, JLabel exceptionMessage ) throws MineSweeperException {
-        if(!customRows.getText().trim().isEmpty() && !customColumns.getText().trim().isEmpty()) {
+        if(!customRows.getText().trim().isEmpty() && !customColumns.getText().trim().isEmpty()
+                && customRows.getText().trim().matches("\\d+") && customColumns.getText().trim().matches("\\d+")) {
             int rows = Integer.parseInt(customRows.getText());
             int columns = Integer.parseInt(customColumns.getText());
             if (rows > 30 || rows < 2 || columns > 30 || columns < 2) {
@@ -110,6 +111,10 @@ public class ControllerMineSweeper extends MineSweeperException {
                 this.rows = rows;
                 this.columns = columns;
             }
+        }
+        else if(!customRows.getText().trim().isEmpty() && !customColumns.getText().trim().isEmpty()){
+            exceptionMessage(exceptionMessage, "Must be integers");
+            throw new MineSweeperException("Invalid integers");
         }
         if(customRows.getText().trim().isEmpty() || customColumns.getText().trim().isEmpty()) {
             exceptionMessage(exceptionMessage, "Rows and column must not be empty");
@@ -267,7 +272,7 @@ public class ControllerMineSweeper extends MineSweeperException {
                     }
                 }
             }
-            if (modelBoard.gameStatus() == false) {
+            if (modelBoard.getIsGoing() == false) {
                 player.setPlayerScore(difficulty, modelBoard.getTimePlayed(), modelBoard.getCompleted());
                 player.addPlayerScore();
             }
